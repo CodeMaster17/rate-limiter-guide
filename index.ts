@@ -21,15 +21,15 @@ class RedisRateLimiter {
   static getInstance(c: Context<Env, "/todos/:id", BlankInput>) {
     // following singelton pattern
     if (!this.Instance) {
-      const { REDIS_URL, REDIS_TOKEN } = env<{
-        REDIS_URL: string;
-        REDIS_TOKEN: string;
+      const { UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN } = env<{
+        UPSTASH_REDIS_REST_URL: string;
+        UPSTASH_REDIS_REST_TOKEN: string;
       }>(c);
 
       // access the database
       const redisClient = new Redis({
-        token: REDIS_TOKEN,
-        url: REDIS_URL,
+        token: UPSTASH_REDIS_REST_TOKEN,
+        url: UPSTASH_REDIS_REST_URL,
       });
 
       const rateLimit = new Ratelimit({
@@ -47,19 +47,24 @@ class RedisRateLimiter {
 app.use(async (c, next) => {
   const ratelimit = RedisRateLimiter.getInstance(c);
   if (ratelimit) {
-    c.set('ratelimit', ratelimit);
+    c.set("ratelimit", ratelimit);
   }
   await next();
 });
 
-app.get("/todos/:id", (c) => {
+app.get("/todos/:id", async (c) => {
+  const ratelimit = c.get("ratelimit");
+  const ip = c.req.raw.headers.get("cf-connecting-ip");
+  const { success } = await ratelimit.limit(ip ?? "anonymous");
 
-  
-
-  const todoId = c.req.param("id");
-  const todoIndex = Number(todoId);
-  const todo = todos[todoIndex] || {};
-  return c.json({ todos: [] });
+  if (success) {
+    const todoId = c.req.param("id");
+    const todoIndex = Number(todoId);
+    const todo = todos[todoIndex] || {};
+    return c.json({ todos: [] });
+  } else {
+    return c.json({ message: "Rate limit exceeded" }, { status: 429 });
+  }
 });
 
 export default app;

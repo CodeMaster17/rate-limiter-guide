@@ -5841,10 +5841,10 @@ var cache = /* @__PURE__ */ new Map();
 var RedisRateLimiter = class {
   static getInstance(c) {
     if (!this.Instance) {
-      const { REDIS_URL, REDIS_TOKEN } = env(c);
+      const { UPSTASH_REDIS_REST_URL: UPSTASH_REDIS_REST_URL2, UPSTASH_REDIS_REST_TOKEN: UPSTASH_REDIS_REST_TOKEN2 } = env(c);
       const redisClient = new a({
-        token: REDIS_TOKEN,
-        url: REDIS_URL
+        token: UPSTASH_REDIS_REST_TOKEN2,
+        url: UPSTASH_REDIS_REST_URL2
       });
       const rateLimit = new import_ratelimit.Ratelimit({
         redis: redisClient,
@@ -5865,11 +5865,18 @@ app.use(async (c, next) => {
   }
   await next();
 });
-app.get("/todos/:id", (c) => {
-  const todoId = c.req.param("id");
-  const todoIndex = Number(todoId);
-  const todo = todos[todoIndex] || {};
-  return c.json({ todos: [] });
+app.get("/todos/:id", async (c) => {
+  const ratelimit = c.get("ratelimit");
+  const ip = c.req.raw.headers.get("cf-connecting-ip");
+  const { success } = await ratelimit.limit(ip ?? "anonymous");
+  if (success) {
+    const todoId = c.req.param("id");
+    const todoIndex = Number(todoId);
+    const todo = todos[todoIndex] || {};
+    return c.json({ todos: [] });
+  } else {
+    return c.json({ message: "Rate limit exceeded" }, { status: 429 });
+  }
 });
 var Rate_Limiter_default = app;
 
