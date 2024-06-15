@@ -884,14 +884,14 @@ var Hono = class {
     }
     throw err;
   }
-  dispatch(request, executionCtx, env, method) {
+  dispatch(request, executionCtx, env2, method) {
     if (method === "HEAD") {
-      return (async () => new Response(null, await this.dispatch(request, executionCtx, env, "GET")))();
+      return (async () => new Response(null, await this.dispatch(request, executionCtx, env2, "GET")))();
     }
-    const path = this.getPath(request, { env });
+    const path = this.getPath(request, { env: env2 });
     const matchResult = this.matchRoute(method, path);
     const c = new Context(new HonoRequest(request, path, matchResult), {
-      env,
+      env: env2,
       executionCtx,
       notFoundHandler: this.notFoundHandler
     });
@@ -1543,9 +1543,9 @@ app.get("/todos", (c) => {
 var Rate_Limiter_default = app;
 
 // node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts
-var drainBody = async (request, env, _ctx, middlewareCtx) => {
+var drainBody = async (request, env2, _ctx, middlewareCtx) => {
   try {
-    return await middlewareCtx.next(request, env);
+    return await middlewareCtx.next(request, env2);
   } finally {
     try {
       if (request.body !== null && !request.bodyUsed) {
@@ -1569,9 +1569,9 @@ function reduceError(e) {
     cause: e?.cause === void 0 ? void 0 : reduceError(e.cause)
   };
 }
-var jsonError = async (request, env, _ctx, middlewareCtx) => {
+var jsonError = async (request, env2, _ctx, middlewareCtx) => {
   try {
-    return await middlewareCtx.next(request, env);
+    return await middlewareCtx.next(request, env2);
   } catch (e) {
     const error = reduceError(e);
     return Response.json(error, {
@@ -1595,7 +1595,7 @@ var __facade_middleware__ = [];
 function __facade_register__(...args) {
   __facade_middleware__.push(...args.flat());
 }
-function __facade_invokeChain__(request, env, ctx, dispatch, middlewareChain) {
+function __facade_invokeChain__(request, env2, ctx, dispatch, middlewareChain) {
   const [head, ...tail] = middlewareChain;
   const middlewareCtx = {
     dispatch,
@@ -1603,10 +1603,10 @@ function __facade_invokeChain__(request, env, ctx, dispatch, middlewareChain) {
       return __facade_invokeChain__(newRequest, newEnv, ctx, dispatch, tail);
     }
   };
-  return head(request, env, ctx, middlewareCtx);
+  return head(request, env2, ctx, middlewareCtx);
 }
-function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
-  return __facade_invokeChain__(request, env, ctx, dispatch, [
+function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
+  return __facade_invokeChain__(request, env2, ctx, dispatch, [
     ...__facade_middleware__,
     finalMiddleware
   ]);
@@ -1634,15 +1634,15 @@ function wrapExportedHandler(worker) {
   for (const middleware of __INTERNAL_WRANGLER_MIDDLEWARE__) {
     __facade_register__(middleware);
   }
-  const fetchDispatcher = function(request, env, ctx) {
+  const fetchDispatcher = function(request, env2, ctx) {
     if (worker.fetch === void 0) {
       throw new Error("Handler does not export a fetch() function.");
     }
-    return worker.fetch(request, env, ctx);
+    return worker.fetch(request, env2, ctx);
   };
   return {
     ...worker,
-    fetch(request, env, ctx) {
+    fetch(request, env2, ctx) {
       const dispatcher = function(type, init) {
         if (type === "scheduled" && worker.scheduled !== void 0) {
           const controller = new __Facade_ScheduledController__(
@@ -1651,10 +1651,10 @@ function wrapExportedHandler(worker) {
             () => {
             }
           );
-          return worker.scheduled(controller, env, ctx);
+          return worker.scheduled(controller, env2, ctx);
         }
       };
-      return __facade_invoke__(request, env, ctx, dispatcher, fetchDispatcher);
+      return __facade_invoke__(request, env2, ctx, dispatcher, fetchDispatcher);
     }
   };
 }
@@ -1666,8 +1666,8 @@ function wrapWorkerEntrypoint(klass) {
     __facade_register__(middleware);
   }
   return class extends klass {
-    #fetchDispatcher = (request, env, ctx) => {
-      this.env = env;
+    #fetchDispatcher = (request, env2, ctx) => {
+      this.env = env2;
       this.ctx = ctx;
       if (super.fetch === void 0) {
         throw new Error("Entrypoint class does not define a fetch() function.");
