@@ -1,5 +1,40 @@
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
+  get: (a2, b) => (typeof require !== "undefined" ? require : a2)[b]
+}) : x)(function(x) {
+  if (typeof require !== "undefined")
+    return require.apply(this, arguments);
+  throw new Error('Dynamic require of "' + x + '" is not supported');
+});
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
+var __commonJS = (cb, mod) => function __require2() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+
 // .wrangler/tmp/bundle-9BAu4g/checked-fetch.js
-var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
     (typeof request === "string" ? new Request(request, init) : request).url
@@ -15,15 +50,2591 @@ function checkURL(request, init) {
     }
   }
 }
-globalThis.fetch = new Proxy(globalThis.fetch, {
-  apply(target, thisArg, argArray) {
-    const [request, init] = argArray;
-    checkURL(request, init);
-    return Reflect.apply(target, thisArg, argArray);
+var urls;
+var init_checked_fetch = __esm({
+  ".wrangler/tmp/bundle-9BAu4g/checked-fetch.js"() {
+    "use strict";
+    urls = /* @__PURE__ */ new Set();
+    globalThis.fetch = new Proxy(globalThis.fetch, {
+      apply(target, thisArg, argArray) {
+        const [request, init] = argArray;
+        checkURL(request, init);
+        return Reflect.apply(target, thisArg, argArray);
+      }
+    });
   }
 });
 
+// wrangler-modules-watch:wrangler:modules-watch
+var init_wrangler_modules_watch = __esm({
+  "wrangler-modules-watch:wrangler:modules-watch"() {
+    init_checked_fetch();
+    init_modules_watch_stub();
+  }
+});
+
+// node_modules/wrangler/templates/modules-watch-stub.js
+var init_modules_watch_stub = __esm({
+  "node_modules/wrangler/templates/modules-watch-stub.js"() {
+    init_wrangler_modules_watch();
+  }
+});
+
+// node_modules/@upstash/core-analytics/dist/index.js
+var require_dist = __commonJS({
+  "node_modules/@upstash/core-analytics/dist/index.js"(exports, module) {
+    "use strict";
+    init_checked_fetch();
+    init_modules_watch_stub();
+    var g = Object.defineProperty;
+    var k = Object.getOwnPropertyDescriptor;
+    var _ = Object.getOwnPropertyNames;
+    var w = Object.prototype.hasOwnProperty;
+    var y = (l, e) => {
+      for (var t in e)
+        g(l, t, { get: e[t], enumerable: true });
+    };
+    var A = (l, e, t, n) => {
+      if (e && typeof e == "object" || typeof e == "function")
+        for (let s of _(e))
+          !w.call(l, s) && s !== t && g(l, s, { get: () => e[s], enumerable: !(n = k(e, s)) || n.enumerable });
+      return l;
+    };
+    var S = (l) => A(g({}, "__esModule", { value: true }), l);
+    var x = {};
+    y(x, { Analytics: () => b });
+    module.exports = S(x);
+    var p = `
+local key = KEYS[1]
+local field = ARGV[1]
+
+local data = redis.call("ZRANGE", key, 0, -1, "WITHSCORES")
+local count = {}
+
+for i = 1, #data, 2 do
+  local json_str = data[i]
+  local score = tonumber(data[i + 1])
+  local obj = cjson.decode(json_str)
+
+  local fieldValue = obj[field]
+
+  if count[fieldValue] == nil then
+    count[fieldValue] = score
+  else
+    count[fieldValue] = count[fieldValue] + score
+  end
+end
+
+local result = {}
+for k, v in pairs(count) do
+  table.insert(result, {k, v})
+end
+
+return result
+`;
+    var f = `
+local prefix = KEYS[1]
+local first_timestamp = tonumber(ARGV[1])
+local increment = tonumber(ARGV[2])
+local num_timestamps = tonumber(ARGV[3])
+local num_elements = tonumber(ARGV[4])
+
+local keys = {}
+for i = 1, num_timestamps do
+  local timestamp = first_timestamp - (i - 1) * increment
+  table.insert(keys, prefix .. ":" .. timestamp)
+end
+
+-- get the union of the groups
+local zunion_params = {"ZUNION", num_timestamps, unpack(keys)}
+table.insert(zunion_params, "WITHSCORES")
+local result = redis.call(unpack(zunion_params))
+
+-- select num_elements many items
+local true_group = {}
+local false_group = {}
+local denied_group = {}
+local true_count = 0
+local false_count = 0
+local denied_count = 0
+local i = #result - 1
+
+-- iterate over the results
+while (true_count + false_count + denied_count) < (num_elements * 3) and 1 <= i do
+  local score = tonumber(result[i + 1])
+  if score > 0 then
+    local element = result[i]
+    if string.find(element, "success\\":true") and true_count < num_elements then
+      table.insert(true_group, {score, element})
+      true_count = true_count + 1
+    elseif string.find(element, "success\\":false") and false_count < num_elements then
+      table.insert(false_group, {score, element})
+      false_count = false_count + 1
+    elseif string.find(element, "success\\":\\"denied") and denied_count < num_elements then
+      table.insert(denied_group, {score, element})
+      denied_count = denied_count + 1
+    end
+  end
+  i = i - 2
+end
+
+return {true_group, false_group, denied_group}
+`;
+    var h = `
+local prefix = KEYS[1]
+local first_timestamp = tonumber(ARGV[1])
+local increment = tonumber(ARGV[2])
+local num_timestamps = tonumber(ARGV[3])
+
+local keys = {}
+for i = 1, num_timestamps do
+  local timestamp = first_timestamp - (i - 1) * increment
+  table.insert(keys, prefix .. ":" .. timestamp)
+end
+
+-- get the union of the groups
+local zunion_params = {"ZUNION", num_timestamps, unpack(keys)}
+table.insert(zunion_params, "WITHSCORES")
+local result = redis.call(unpack(zunion_params))
+
+return result
+`;
+    var b = class {
+      redis;
+      prefix;
+      bucketSize;
+      constructor(e) {
+        this.redis = e.redis, this.prefix = e.prefix ?? "@upstash/analytics", this.bucketSize = this.parseWindow(e.window);
+      }
+      validateTableName(e) {
+        if (!/^[a-zA-Z0-9_-]+$/.test(e))
+          throw new Error(`Invalid table name: ${e}. Table names can only contain letters, numbers, dashes and underscores.`);
+      }
+      parseWindow(e) {
+        if (typeof e == "number") {
+          if (e <= 0)
+            throw new Error(`Invalid window: ${e}`);
+          return e;
+        }
+        let t = /^(\d+)([smhd])$/;
+        if (!t.test(e))
+          throw new Error(`Invalid window: ${e}`);
+        let [, n, s] = e.match(t), i = parseInt(n);
+        switch (s) {
+          case "s":
+            return i * 1e3;
+          case "m":
+            return i * 1e3 * 60;
+          case "h":
+            return i * 1e3 * 60 * 60;
+          case "d":
+            return i * 1e3 * 60 * 60 * 24;
+          default:
+            throw new Error(`Invalid window unit: ${s}`);
+        }
+      }
+      getBucket(e) {
+        let t = e ?? Date.now();
+        return Math.floor(t / this.bucketSize) * this.bucketSize;
+      }
+      async ingest(e, ...t) {
+        this.validateTableName(e), await Promise.all(t.map(async (n) => {
+          let s = this.getBucket(n.time), i = [this.prefix, e, s].join(":");
+          await this.redis.zincrby(i, 1, JSON.stringify({ ...n, time: void 0 }));
+        }));
+      }
+      formatBucketAggregate(e, t, n) {
+        let s = {};
+        return e.forEach(([i, r]) => {
+          t == "success" && (i = i === 1 ? "true" : i === null ? "false" : i), s[t] = s[t] || {}, s[t][(i ?? "null").toString()] = r;
+        }), { time: n, ...s };
+      }
+      async aggregateBucket(e, t, n) {
+        this.validateTableName(e);
+        let s = this.getBucket(n), i = [this.prefix, e, s].join(":"), r = await this.redis.eval(p, [i], [t]);
+        return this.formatBucketAggregate(r, t, s);
+      }
+      async aggregateBuckets(e, t, n, s) {
+        this.validateTableName(e);
+        let i = this.getBucket(s), r = [];
+        for (let o = 0; o < n; o += 1)
+          r.push(this.aggregateBucket(e, t, i)), i = i - this.bucketSize;
+        return Promise.all(r);
+      }
+      async aggregateBucketsWithPipeline(e, t, n, s, i) {
+        this.validateTableName(e), i = i ?? 48;
+        let r = this.getBucket(s), o = [], c = this.redis.pipeline(), u = [];
+        for (let a2 = 1; a2 <= n; a2 += 1) {
+          let d = [this.prefix, e, r].join(":");
+          c.eval(p, [d], [t]), o.push(r), r = r - this.bucketSize, (a2 % i == 0 || a2 == n) && (u.push(c.exec()), c = this.redis.pipeline());
+        }
+        return (await Promise.all(u)).flat().map((a2, d) => this.formatBucketAggregate(a2, t, o[d]));
+      }
+      async getAllowedBlocked(e, t, n) {
+        this.validateTableName(e);
+        let s = [this.prefix, e].join(":"), i = this.getBucket(n), r = await this.redis.eval(h, [s], [i, this.bucketSize, t]), o = {};
+        for (let c = 0; c < r.length; c += 2) {
+          let u = r[c], m = u.identifier, a2 = +r[c + 1];
+          o[m] || (o[m] = { success: 0, blocked: 0 }), o[m][u.success ? "success" : "blocked"] = a2;
+        }
+        return o;
+      }
+      async getMostAllowedBlocked(e, t, n, s) {
+        this.validateTableName(e);
+        let i = [this.prefix, e].join(":"), r = this.getBucket(s), [o, c, u] = await this.redis.eval(f, [i], [r, this.bucketSize, t, n]);
+        return { allowed: this.toDicts(o), ratelimited: this.toDicts(c), denied: this.toDicts(u) };
+      }
+      toDicts(e) {
+        let t = [];
+        for (let n = 0; n < e.length; n += 1) {
+          let s = +e[n][0], i = e[n][1];
+          t.push({ identifier: i.identifier, count: s });
+        }
+        return t;
+      }
+    };
+  }
+});
+
+// node_modules/@upstash/ratelimit/dist/index.js
+var require_dist2 = __commonJS({
+  "node_modules/@upstash/ratelimit/dist/index.js"(exports, module) {
+    "use strict";
+    init_checked_fetch();
+    init_modules_watch_stub();
+    var __defProp2 = Object.defineProperty;
+    var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
+    var __getOwnPropNames2 = Object.getOwnPropertyNames;
+    var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+    var __export = (target, all) => {
+      for (var name in all)
+        __defProp2(target, name, { get: all[name], enumerable: true });
+    };
+    var __copyProps2 = (to, from, except, desc) => {
+      if (from && typeof from === "object" || typeof from === "function") {
+        for (let key of __getOwnPropNames2(from))
+          if (!__hasOwnProp2.call(to, key) && key !== except)
+            __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc2(from, key)) || desc.enumerable });
+      }
+      return to;
+    };
+    var __toCommonJS = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
+    var src_exports = {};
+    __export(src_exports, {
+      Analytics: () => Analytics2,
+      IpDenyList: () => ip_deny_list_exports,
+      MultiRegionRatelimit: () => MultiRegionRatelimit,
+      Ratelimit: () => RegionRatelimit
+    });
+    module.exports = __toCommonJS(src_exports);
+    var import_core_analytics = require_dist();
+    var Analytics2 = class {
+      analytics;
+      table = "events";
+      constructor(config) {
+        this.analytics = new import_core_analytics.Analytics({
+          // @ts-expect-error we need to fix the types in core-analytics, it should only require the methods it needs, not the whole sdk
+          redis: config.redis,
+          window: "1h",
+          prefix: config.prefix ?? "@upstash/ratelimit",
+          retention: "90d"
+        });
+      }
+      /**
+       * Try to extract the geo information from the request
+       *
+       * This handles Vercel's `req.geo` and  and Cloudflare's `request.cf` properties
+       * @param req
+       * @returns
+       */
+      extractGeo(req) {
+        if (typeof req.geo !== "undefined") {
+          return req.geo;
+        }
+        if (typeof req.cf !== "undefined") {
+          return req.cf;
+        }
+        return {};
+      }
+      async record(event) {
+        await this.analytics.ingest(this.table, event);
+      }
+      async series(filter, cutoff) {
+        const timestampCount = Math.min(
+          (this.analytics.getBucket(Date.now()) - this.analytics.getBucket(cutoff)) / (60 * 60 * 1e3),
+          256
+        );
+        return this.analytics.aggregateBucketsWithPipeline(this.table, filter, timestampCount);
+      }
+      async getUsage(cutoff = 0) {
+        const timestampCount = Math.min(
+          (this.analytics.getBucket(Date.now()) - this.analytics.getBucket(cutoff)) / (60 * 60 * 1e3),
+          256
+        );
+        const records = await this.analytics.getAllowedBlocked(this.table, timestampCount);
+        return records;
+      }
+      async getUsageOverTime(timestampCount, groupby) {
+        const result = await this.analytics.aggregateBucketsWithPipeline(this.table, groupby, timestampCount);
+        return result;
+      }
+      async getMostAllowedBlocked(timestampCount, getTop) {
+        getTop = getTop ?? 5;
+        return this.analytics.getMostAllowedBlocked(this.table, timestampCount, getTop);
+      }
+    };
+    var Cache = class {
+      /**
+       * Stores identifier -> reset (in milliseconds)
+       */
+      cache;
+      constructor(cache) {
+        this.cache = cache;
+      }
+      isBlocked(identifier) {
+        if (!this.cache.has(identifier)) {
+          return { blocked: false, reset: 0 };
+        }
+        const reset = this.cache.get(identifier);
+        if (reset < Date.now()) {
+          this.cache.delete(identifier);
+          return { blocked: false, reset: 0 };
+        }
+        return { blocked: true, reset };
+      }
+      blockUntil(identifier, reset) {
+        this.cache.set(identifier, reset);
+      }
+      set(key, value) {
+        this.cache.set(key, value);
+      }
+      get(key) {
+        return this.cache.get(key) || null;
+      }
+      incr(key) {
+        let value = this.cache.get(key) ?? 0;
+        value += 1;
+        this.cache.set(key, value);
+        return value;
+      }
+      pop(key) {
+        this.cache.delete(key);
+      }
+      empty() {
+        this.cache.clear();
+      }
+      size() {
+        return this.cache.size;
+      }
+    };
+    function ms(d) {
+      const match = d.match(/^(\d+)\s?(ms|s|m|h|d)$/);
+      if (!match) {
+        throw new Error(`Unable to parse window size: ${d}`);
+      }
+      const time = Number.parseInt(match[1]);
+      const unit = match[2];
+      switch (unit) {
+        case "ms":
+          return time;
+        case "s":
+          return time * 1e3;
+        case "m":
+          return time * 1e3 * 60;
+        case "h":
+          return time * 1e3 * 60 * 60;
+        case "d":
+          return time * 1e3 * 60 * 60 * 24;
+        default:
+          throw new Error(`Unable to parse window size: ${d}`);
+      }
+    }
+    var setHash = async (ctx, script, kind) => {
+      const regionContexts = "redis" in ctx ? [ctx] : ctx.regionContexts;
+      const hashSample = regionContexts[0].scriptHashes[kind];
+      if (!hashSample) {
+        await Promise.all(regionContexts.map(async (context) => {
+          context.scriptHashes[kind] = await context.redis.scriptLoad(script);
+        }));
+      }
+      ;
+    };
+    var safeEval = async (ctx, script, kind, keys, args) => {
+      if (!ctx.cacheScripts) {
+        return await ctx.redis.eval(script, keys, args);
+      }
+      ;
+      await setHash(ctx, script, kind);
+      try {
+        return await ctx.redis.evalsha(ctx.scriptHashes[kind], keys, args);
+      } catch (error) {
+        if (`${error}`.includes("NOSCRIPT")) {
+          console.log("Script with the expected hash was not found in redis db. It is probably flushed. Will load another scipt before continuing.");
+          ctx.scriptHashes[kind] = void 0;
+          await setHash(ctx, script, kind);
+          console.log("  New script successfully loaded.");
+          return await ctx.redis.evalsha(ctx.scriptHashes[kind], keys, args);
+        }
+        throw error;
+      }
+    };
+    var fixedWindowLimitScript = `
+	local key           = KEYS[1]
+	local id            = ARGV[1]
+	local window        = ARGV[2]
+	local incrementBy   = tonumber(ARGV[3])
+
+	redis.call("HSET", key, id, incrementBy)
+	local fields = redis.call("HGETALL", key)
+	if #fields == 2 and tonumber(fields[2])==incrementBy then
+	-- The first time this key is set, and the value will be equal to incrementBy.
+	-- So we only need the expire command once
+	  redis.call("PEXPIRE", key, window)
+	end
+
+	return fields
+`;
+    var fixedWindowRemainingTokensScript = `
+      local key = KEYS[1]
+      local tokens = 0
+
+      local fields = redis.call("HGETALL", key)
+
+      return fields
+    `;
+    var slidingWindowLimitScript = `
+	local currentKey    = KEYS[1]           -- identifier including prefixes
+	local previousKey   = KEYS[2]           -- key of the previous bucket
+	local tokens        = tonumber(ARGV[1]) -- tokens per window
+	local now           = ARGV[2]           -- current timestamp in milliseconds
+	local window        = ARGV[3]           -- interval in milliseconds
+	local requestId     = ARGV[4]           -- uuid for this request
+	local incrementBy   = tonumber(ARGV[5]) -- custom rate, default is  1
+
+	local currentFields = redis.call("HGETALL", currentKey)
+	local requestsInCurrentWindow = 0
+	for i = 2, #currentFields, 2 do
+	requestsInCurrentWindow = requestsInCurrentWindow + tonumber(currentFields[i])
+	end
+
+	local previousFields = redis.call("HGETALL", previousKey)
+	local requestsInPreviousWindow = 0
+	for i = 2, #previousFields, 2 do
+	requestsInPreviousWindow = requestsInPreviousWindow + tonumber(previousFields[i])
+	end
+
+	local percentageInCurrent = ( now % window) / window
+	if requestsInPreviousWindow * (1 - percentageInCurrent ) + requestsInCurrentWindow >= tokens then
+	  return {currentFields, previousFields, false}
+	end
+
+	redis.call("HSET", currentKey, requestId, incrementBy)
+
+	if requestsInCurrentWindow == 0 then 
+	  -- The first time this key is set, the value will be equal to incrementBy.
+	  -- So we only need the expire command once
+	  redis.call("PEXPIRE", currentKey, window * 2 + 1000) -- Enough time to overlap with a new window + 1 second
+	end
+	return {currentFields, previousFields, true}
+`;
+    var slidingWindowRemainingTokensScript = `
+	local currentKey    = KEYS[1]           -- identifier including prefixes
+	local previousKey   = KEYS[2]           -- key of the previous bucket
+	local now         	= ARGV[1]           -- current timestamp in milliseconds
+  	local window      	= ARGV[2]           -- interval in milliseconds
+
+	local currentFields = redis.call("HGETALL", currentKey)
+	local requestsInCurrentWindow = 0
+	for i = 2, #currentFields, 2 do
+	requestsInCurrentWindow = requestsInCurrentWindow + tonumber(currentFields[i])
+	end
+
+	local previousFields = redis.call("HGETALL", previousKey)
+	local requestsInPreviousWindow = 0
+	for i = 2, #previousFields, 2 do
+	requestsInPreviousWindow = requestsInPreviousWindow + tonumber(previousFields[i])
+	end
+
+	local percentageInCurrent = ( now % window) / window
+  	requestsInPreviousWindow = math.floor(( 1 - percentageInCurrent ) * requestsInPreviousWindow)
+	
+	return requestsInCurrentWindow + requestsInPreviousWindow
+`;
+    var resetScript = `
+      local pattern = KEYS[1]
+
+      -- Initialize cursor to start from 0
+      local cursor = "0"
+
+      repeat
+          -- Scan for keys matching the pattern
+          local scan_result = redis.call('SCAN', cursor, 'MATCH', pattern)
+
+          -- Extract cursor for the next iteration
+          cursor = scan_result[1]
+
+          -- Extract keys from the scan result
+          local keys = scan_result[2]
+
+          for i=1, #keys do
+          redis.call('DEL', keys[i])
+          end
+
+      -- Continue scanning until cursor is 0 (end of keyspace)
+      until cursor == "0"
+    `;
+    var DenyListExtension = "denyList";
+    var IpDenyListKey = "ipDenyList";
+    var IpDenyListStatusKey = "ipDenyListStatus";
+    var checkDenyListScript = `
+  -- Checks if values provideed in ARGV are present in the deny lists.
+  -- This is done using the allDenyListsKey below.
+
+  -- Additionally, checks the status of the ip deny list using the
+  -- ipDenyListStatusKey below. Here are the possible states of the
+  -- ipDenyListStatusKey key:
+  -- * status == -1: set to "disabled" with no TTL
+  -- * status == -2: not set, meaning that is was set before but expired
+  -- * status  >  0: set to "valid", with a TTL
+  --
+  -- In the case of status == -2, we set the status to "pending" with
+  -- 30 second ttl. During this time, the process which got status == -2
+  -- will update the ip deny list.
+
+  local allDenyListsKey     = KEYS[1]
+  local ipDenyListStatusKey = KEYS[2]
+
+  local results = redis.call('SMISMEMBER', allDenyListsKey, unpack(ARGV))
+  local status  = redis.call('TTL', ipDenyListStatusKey)
+  if status == -2 then
+    redis.call('SETEX', ipDenyListStatusKey, 30, "pending")
+  end
+
+  return { results, status }
+`;
+    var ip_deny_list_exports = {};
+    __export(ip_deny_list_exports, {
+      ThresholdError: () => ThresholdError,
+      disableIpDenyList: () => disableIpDenyList,
+      updateIpDenyList: () => updateIpDenyList
+    });
+    var MILLISECONDS_IN_HOUR = 60 * 60 * 1e3;
+    var MILLISECONDS_IN_DAY = 24 * MILLISECONDS_IN_HOUR;
+    var MILLISECONDS_TO_2AM = 2 * MILLISECONDS_IN_HOUR;
+    var getIpListTTL = (time) => {
+      const now = time || Date.now();
+      const timeSinceLast2AM = (now - MILLISECONDS_TO_2AM) % MILLISECONDS_IN_DAY;
+      return MILLISECONDS_IN_DAY - timeSinceLast2AM;
+    };
+    var baseUrl = "https://raw.githubusercontent.com/stamparm/ipsum/master/levels";
+    var ThresholdError = class extends Error {
+      constructor(threshold) {
+        super(`Allowed threshold values are from 1 to 8, 1 and 8 included. Received: ${threshold}`);
+        this.name = "ThresholdError";
+      }
+    };
+    var getIpDenyList = async (threshold) => {
+      if (typeof threshold !== "number" || threshold < 1 || threshold > 8) {
+        throw new ThresholdError(threshold);
+      }
+      try {
+        const response = await fetch(`${baseUrl}/${threshold}.txt`);
+        if (!response.ok) {
+          throw new Error(`Error fetching data: ${response.statusText}`);
+        }
+        const data = await response.text();
+        const lines = data.split("\n");
+        return lines.filter((value) => value.length > 0);
+      } catch (error) {
+        throw new Error(`Failed to fetch ip deny list: ${error}`);
+      }
+    };
+    var updateIpDenyList = async (redis, prefix, threshold, ttl) => {
+      const allIps = await getIpDenyList(threshold);
+      const allDenyLists = [prefix, DenyListExtension, "all"].join(":");
+      const ipDenyList = [prefix, DenyListExtension, IpDenyListKey].join(":");
+      const statusKey = [prefix, IpDenyListStatusKey].join(":");
+      const transaction = redis.multi();
+      transaction.sdiffstore(allDenyLists, allDenyLists, ipDenyList);
+      transaction.del(ipDenyList);
+      transaction.sadd(ipDenyList, ...allIps);
+      transaction.sdiffstore(ipDenyList, ipDenyList, allDenyLists);
+      transaction.sunionstore(allDenyLists, allDenyLists, ipDenyList);
+      transaction.set(statusKey, "valid", { px: ttl ?? getIpListTTL() });
+      return await transaction.exec();
+    };
+    var disableIpDenyList = async (redis, prefix) => {
+      const allDenyListsKey = [prefix, DenyListExtension, "all"].join(":");
+      const ipDenyListKey = [prefix, DenyListExtension, IpDenyListKey].join(":");
+      const statusKey = [prefix, IpDenyListStatusKey].join(":");
+      const transaction = redis.multi();
+      transaction.sdiffstore(allDenyListsKey, allDenyListsKey, ipDenyListKey);
+      transaction.del(ipDenyListKey);
+      transaction.set(statusKey, "disabled");
+      return await transaction.exec();
+    };
+    var denyListCache = new Cache(/* @__PURE__ */ new Map());
+    var checkDenyListCache = (members) => {
+      return members.find(
+        (member) => denyListCache.isBlocked(member).blocked
+      );
+    };
+    var blockMember = (member) => {
+      if (denyListCache.size() > 1e3)
+        denyListCache.empty();
+      denyListCache.blockUntil(member, Date.now() + 6e4);
+    };
+    var checkDenyList = async (redis, prefix, members) => {
+      const [deniedValues, ipDenyListStatus] = await redis.eval(
+        checkDenyListScript,
+        [
+          [prefix, DenyListExtension, "all"].join(":"),
+          [prefix, IpDenyListStatusKey].join(":")
+        ],
+        members
+      );
+      let deniedValue = void 0;
+      deniedValues.map((memberDenied, index) => {
+        if (memberDenied) {
+          blockMember(members[index]);
+          deniedValue = members[index];
+        }
+      });
+      return {
+        deniedValue,
+        invalidIpDenyList: ipDenyListStatus === -2
+      };
+    };
+    var resolveLimitPayload = (redis, prefix, [ratelimitResponse, denyListResponse], threshold) => {
+      if (denyListResponse.deniedValue) {
+        ratelimitResponse.success = false;
+        ratelimitResponse.remaining = 0;
+        ratelimitResponse.reason = "denyList";
+        ratelimitResponse.deniedValue = denyListResponse.deniedValue;
+      }
+      if (denyListResponse.invalidIpDenyList) {
+        const updatePromise = updateIpDenyList(redis, prefix, threshold);
+        ratelimitResponse.pending = Promise.all([
+          ratelimitResponse.pending,
+          updatePromise
+        ]);
+      }
+      return ratelimitResponse;
+    };
+    var defaultDeniedResponse = (deniedValue) => {
+      return {
+        success: false,
+        limit: 0,
+        remaining: 0,
+        reset: 0,
+        pending: Promise.resolve(),
+        reason: "denyList",
+        deniedValue
+      };
+    };
+    var Ratelimit2 = class {
+      limiter;
+      ctx;
+      prefix;
+      timeout;
+      primaryRedis;
+      analytics;
+      enableProtection;
+      denyListThreshold;
+      constructor(config) {
+        this.ctx = config.ctx;
+        this.limiter = config.limiter;
+        this.timeout = config.timeout ?? 5e3;
+        this.prefix = config.prefix ?? "@upstash/ratelimit";
+        this.enableProtection = config.enableProtection ?? false;
+        this.denyListThreshold = config.denyListThreshold ?? 6;
+        this.primaryRedis = "redis" in this.ctx ? this.ctx.redis : this.ctx.regionContexts[0].redis;
+        this.analytics = config.analytics ? new Analytics2({
+          redis: this.primaryRedis,
+          prefix: this.prefix
+        }) : void 0;
+        if (config.ephemeralCache instanceof Map) {
+          this.ctx.cache = new Cache(config.ephemeralCache);
+        } else if (typeof config.ephemeralCache === "undefined") {
+          this.ctx.cache = new Cache(/* @__PURE__ */ new Map());
+        }
+      }
+      /**
+       * Determine if a request should pass or be rejected based on the identifier and previously chosen ratelimit.
+       *
+       * Use this if you want to reject all requests that you can not handle right now.
+       *
+       * @example
+       * ```ts
+       *  const ratelimit = new Ratelimit({
+       *    redis: Redis.fromEnv(),
+       *    limiter: Ratelimit.slidingWindow(10, "10 s")
+       *  })
+       *
+       *  const { success } = await ratelimit.limit(id)
+       *  if (!success){
+       *    return "Nope"
+       *  }
+       *  return "Yes"
+       * ```
+       *
+       * @param req.rate - The rate at which tokens will be added or consumed from the token bucket. A higher rate allows for more requests to be processed. Defaults to 1 token per interval if not specified.
+       *
+       * Usage with `req.rate`
+       * @example
+       * ```ts
+       *  const ratelimit = new Ratelimit({
+       *    redis: Redis.fromEnv(),
+       *    limiter: Ratelimit.slidingWindow(100, "10 s")
+       *  })
+       *
+       *  const { success } = await ratelimit.limit(id, {rate: 10})
+       *  if (!success){
+       *    return "Nope"
+       *  }
+       *  return "Yes"
+       * ```
+       */
+      limit = async (identifier, req) => {
+        let timeoutId = null;
+        try {
+          const response = this.getRatelimitResponse(identifier, req);
+          const { responseArray, newTimeoutId } = this.applyTimeout(response);
+          timeoutId = newTimeoutId;
+          const timedResponse = await Promise.race(responseArray);
+          const finalResponse = this.submitAnalytics(timedResponse, identifier, req);
+          return finalResponse;
+        } finally {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+        }
+      };
+      /**
+       * Block until the request may pass or timeout is reached.
+       *
+       * This method returns a promise that resolves as soon as the request may be processed
+       * or after the timeout has been reached.
+       *
+       * Use this if you want to delay the request until it is ready to get processed.
+       *
+       * @example
+       * ```ts
+       *  const ratelimit = new Ratelimit({
+       *    redis: Redis.fromEnv(),
+       *    limiter: Ratelimit.slidingWindow(10, "10 s")
+       *  })
+       *
+       *  const { success } = await ratelimit.blockUntilReady(id, 60_000)
+       *  if (!success){
+       *    return "Nope"
+       *  }
+       *  return "Yes"
+       * ```
+       */
+      blockUntilReady = async (identifier, timeout) => {
+        if (timeout <= 0) {
+          throw new Error("timeout must be positive");
+        }
+        let res;
+        const deadline = Date.now() + timeout;
+        while (true) {
+          res = await this.limit(identifier);
+          if (res.success) {
+            break;
+          }
+          if (res.reset === 0) {
+            throw new Error("This should not happen");
+          }
+          const wait = Math.min(res.reset, deadline) - Date.now();
+          await new Promise((r) => setTimeout(r, wait));
+          if (Date.now() > deadline) {
+            break;
+          }
+        }
+        return res;
+      };
+      resetUsedTokens = async (identifier) => {
+        const pattern = [this.prefix, identifier].join(":");
+        await this.limiter().resetTokens(this.ctx, pattern);
+      };
+      getRemaining = async (identifier) => {
+        const pattern = [this.prefix, identifier].join(":");
+        return await this.limiter().getRemaining(this.ctx, pattern);
+      };
+      /**
+       * Checks if the identifier or the values in req are in the deny list cache.
+       * If so, returns the default denied response.
+       * 
+       * Otherwise, calls redis to check the rate limit and deny list. Returns after
+       * resolving the result. Resolving is overriding the rate limit result if
+       * the some value is in deny list.
+       * 
+       * @param identifier identifier to block
+       * @param req options with ip, user agent, country, rate and geo info
+       * @returns rate limit response
+       */
+      getRatelimitResponse = async (identifier, req) => {
+        const key = this.getKey(identifier);
+        const definedMembers = this.getDefinedMembers(identifier, req);
+        const deniedValue = checkDenyListCache(definedMembers);
+        let result;
+        if (deniedValue) {
+          result = [defaultDeniedResponse(deniedValue), { deniedValue, invalidIpDenyList: false }];
+        } else {
+          result = await Promise.all([
+            this.limiter().limit(this.ctx, key, req?.rate),
+            this.enableProtection ? checkDenyList(this.primaryRedis, this.prefix, definedMembers) : { deniedValue: void 0, invalidIpDenyList: false }
+          ]);
+        }
+        return resolveLimitPayload(this.primaryRedis, this.prefix, result, this.denyListThreshold);
+      };
+      /**
+       * Creates an array with the original response promise and a timeout promise
+       * if this.timeout > 0.
+       * 
+       * @param response Ratelimit response promise
+       * @returns array with the response and timeout promise. also includes the timeout id
+       */
+      applyTimeout = (response) => {
+        let newTimeoutId = null;
+        const responseArray = [response];
+        if (this.timeout > 0) {
+          const timeoutResponse = new Promise((resolve) => {
+            newTimeoutId = setTimeout(() => {
+              resolve({
+                success: true,
+                limit: 0,
+                remaining: 0,
+                reset: 0,
+                pending: Promise.resolve(),
+                reason: "timeout"
+              });
+            }, this.timeout);
+          });
+          responseArray.push(timeoutResponse);
+        }
+        return {
+          responseArray,
+          newTimeoutId
+        };
+      };
+      /**
+       * submits analytics if this.analytics is set
+       * 
+       * @param ratelimitResponse final rate limit response
+       * @param identifier identifier to submit
+       * @param req limit options
+       * @returns rate limit response after updating the .pending field
+       */
+      submitAnalytics = (ratelimitResponse, identifier, req) => {
+        if (this.analytics) {
+          try {
+            const geo = req ? this.analytics.extractGeo(req) : void 0;
+            const analyticsP = this.analytics.record({
+              identifier: ratelimitResponse.reason === "denyList" ? ratelimitResponse.deniedValue : identifier,
+              time: Date.now(),
+              success: ratelimitResponse.reason === "denyList" ? "denied" : ratelimitResponse.success,
+              ...geo
+            }).catch((err) => {
+              let errorMessage = "Failed to record analytics";
+              if (`${err}`.includes("WRONGTYPE")) {
+                errorMessage = `
+    Failed to record analytics. See the information below:
+
+    This can occur when you uprade to Ratelimit version 1.1.2
+    or later from an earlier version.
+
+    This occurs simply because the way we store analytics data
+    has changed. To avoid getting this error, disable analytics
+    for *an hour*, then simply enable it back.
+
+    `;
+              }
+              console.warn(errorMessage, err);
+            });
+            ratelimitResponse.pending = Promise.all([ratelimitResponse.pending, analyticsP]);
+          } catch (err) {
+            console.warn("Failed to record analytics", err);
+          }
+          ;
+        }
+        ;
+        return ratelimitResponse;
+      };
+      getKey = (identifier) => {
+        return [this.prefix, identifier].join(":");
+      };
+      /**
+       * returns a list of defined values from
+       * [identifier, req.ip, req.userAgent, req.country]
+       * 
+       * @param identifier identifier
+       * @param req limit options
+       * @returns list of defined values
+       */
+      getDefinedMembers = (identifier, req) => {
+        const members = [identifier, req?.ip, req?.userAgent, req?.country];
+        return members.filter((item) => Boolean(item));
+      };
+    };
+    function randomId() {
+      let result = "";
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const charactersLength = characters.length;
+      for (let i = 0; i < 16; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return result;
+    }
+    var MultiRegionRatelimit = class extends Ratelimit2 {
+      /**
+       * Create a new Ratelimit instance by providing a `@upstash/redis` instance and the algorithn of your choice.
+       */
+      constructor(config) {
+        super({
+          prefix: config.prefix,
+          limiter: config.limiter,
+          timeout: config.timeout,
+          analytics: config.analytics,
+          ctx: {
+            regionContexts: config.redis.map((redis) => ({
+              redis,
+              scriptHashes: {},
+              cacheScripts: config.cacheScripts ?? true
+            })),
+            cache: config.ephemeralCache ? new Cache(config.ephemeralCache) : void 0
+          }
+        });
+      }
+      /**
+       * Each request inside a fixed time increases a counter.
+       * Once the counter reaches the maximum allowed number, all further requests are
+       * rejected.
+       *
+       * **Pro:**
+       *
+       * - Newer requests are not starved by old ones.
+       * - Low storage cost.
+       *
+       * **Con:**
+       *
+       * A burst of requests near the boundary of a window can result in a very
+       * high request rate because two windows will be filled with requests quickly.
+       *
+       * @param tokens - How many requests a user can make in each time window.
+       * @param window - A fixed timeframe
+       */
+      static fixedWindow(tokens, window2) {
+        const windowDuration = ms(window2);
+        return () => ({
+          async limit(ctx, identifier, rate) {
+            if (ctx.cache) {
+              const { blocked, reset: reset2 } = ctx.cache.isBlocked(identifier);
+              if (blocked) {
+                return {
+                  success: false,
+                  limit: tokens,
+                  remaining: 0,
+                  reset: reset2,
+                  pending: Promise.resolve(),
+                  reason: "cacheBlock"
+                };
+              }
+            }
+            const requestId = randomId();
+            const bucket = Math.floor(Date.now() / windowDuration);
+            const key = [identifier, bucket].join(":");
+            const incrementBy = rate ? Math.max(1, rate) : 1;
+            const dbs = ctx.regionContexts.map((regionContext) => ({
+              redis: regionContext.redis,
+              request: safeEval(
+                regionContext,
+                fixedWindowLimitScript,
+                "limitHash",
+                [key],
+                [requestId, windowDuration, incrementBy]
+              )
+            }));
+            const firstResponse = await Promise.any(dbs.map((s) => s.request));
+            const usedTokens = firstResponse.reduce((accTokens, usedToken, index) => {
+              let parsedToken = 0;
+              if (index % 2) {
+                parsedToken = Number.parseInt(usedToken);
+              }
+              return accTokens + parsedToken;
+            }, 0);
+            const remaining = tokens - usedTokens;
+            async function sync() {
+              const individualIDs = await Promise.all(dbs.map((s) => s.request));
+              const allIDs = Array.from(
+                new Set(
+                  individualIDs.flatMap((_) => _).reduce((acc, curr, index) => {
+                    if (index % 2 === 0) {
+                      acc.push(curr);
+                    }
+                    return acc;
+                  }, [])
+                ).values()
+              );
+              for (const db of dbs) {
+                const usedDbTokens = (await db.request).reduce(
+                  (accTokens, usedToken, index) => {
+                    let parsedToken = 0;
+                    if (index % 2) {
+                      parsedToken = Number.parseInt(usedToken);
+                    }
+                    return accTokens + parsedToken;
+                  },
+                  0
+                );
+                const dbIds = (await db.request).reduce((ids, currentId, index) => {
+                  if (index % 2 === 0) {
+                    ids.push(currentId);
+                  }
+                  return ids;
+                }, []);
+                if (usedDbTokens >= tokens) {
+                  continue;
+                }
+                const diff = allIDs.filter((id) => !dbIds.includes(id));
+                if (diff.length === 0) {
+                  continue;
+                }
+                for (const requestId2 of diff) {
+                  await db.redis.hset(key, { [requestId2]: incrementBy });
+                }
+              }
+            }
+            const success = remaining > 0;
+            const reset = (bucket + 1) * windowDuration;
+            if (ctx.cache && !success) {
+              ctx.cache.blockUntil(identifier, reset);
+            }
+            return {
+              success,
+              limit: tokens,
+              remaining,
+              reset,
+              pending: sync()
+            };
+          },
+          async getRemaining(ctx, identifier) {
+            const bucket = Math.floor(Date.now() / windowDuration);
+            const key = [identifier, bucket].join(":");
+            const dbs = ctx.regionContexts.map((regionContext) => ({
+              redis: regionContext.redis,
+              request: safeEval(
+                regionContext,
+                fixedWindowRemainingTokensScript,
+                "getRemainingHash",
+                [key],
+                [null]
+              )
+            }));
+            const firstResponse = await Promise.any(dbs.map((s) => s.request));
+            const usedTokens = firstResponse.reduce((accTokens, usedToken, index) => {
+              let parsedToken = 0;
+              if (index % 2) {
+                parsedToken = Number.parseInt(usedToken);
+              }
+              return accTokens + parsedToken;
+            }, 0);
+            return Math.max(0, tokens - usedTokens);
+          },
+          async resetTokens(ctx, identifier) {
+            const pattern = [identifier, "*"].join(":");
+            if (ctx.cache) {
+              ctx.cache.pop(identifier);
+            }
+            await Promise.all(ctx.regionContexts.map((regionContext) => {
+              safeEval(
+                regionContext,
+                resetScript,
+                "resetHash",
+                [pattern],
+                [null]
+              );
+            }));
+          }
+        });
+      }
+      /**
+       * Combined approach of `slidingLogs` and `fixedWindow` with lower storage
+       * costs than `slidingLogs` and improved boundary behavior by calculating a
+       * weighted score between two windows.
+       *
+       * **Pro:**
+       *
+       * Good performance allows this to scale to very high loads.
+       *
+       * **Con:**
+       *
+       * Nothing major.
+       *
+       * @param tokens - How many requests a user can make in each time window.
+       * @param window - The duration in which the user can max X requests.
+       */
+      static slidingWindow(tokens, window2) {
+        const windowSize = ms(window2);
+        const windowDuration = ms(window2);
+        return () => ({
+          async limit(ctx, identifier, rate) {
+            if (ctx.cache) {
+              const { blocked, reset: reset2 } = ctx.cache.isBlocked(identifier);
+              if (blocked) {
+                return {
+                  success: false,
+                  limit: tokens,
+                  remaining: 0,
+                  reset: reset2,
+                  pending: Promise.resolve(),
+                  reason: "cacheBlock"
+                };
+              }
+            }
+            const requestId = randomId();
+            const now = Date.now();
+            const currentWindow = Math.floor(now / windowSize);
+            const currentKey = [identifier, currentWindow].join(":");
+            const previousWindow = currentWindow - 1;
+            const previousKey = [identifier, previousWindow].join(":");
+            const incrementBy = rate ? Math.max(1, rate) : 1;
+            const dbs = ctx.regionContexts.map((regionContext) => ({
+              redis: regionContext.redis,
+              request: safeEval(
+                regionContext,
+                slidingWindowLimitScript,
+                "limitHash",
+                [currentKey, previousKey],
+                [tokens, now, windowDuration, requestId, incrementBy]
+                // lua seems to return `1` for true and `null` for false
+              )
+            }));
+            const percentageInCurrent = now % windowDuration / windowDuration;
+            const [current, previous, success] = await Promise.any(dbs.map((s) => s.request));
+            if (success) {
+              current.push(requestId, incrementBy.toString());
+            }
+            const previousUsedTokens = previous.reduce((accTokens, usedToken, index) => {
+              let parsedToken = 0;
+              if (index % 2) {
+                parsedToken = Number.parseInt(usedToken);
+              }
+              return accTokens + parsedToken;
+            }, 0);
+            const currentUsedTokens = current.reduce((accTokens, usedToken, index) => {
+              let parsedToken = 0;
+              if (index % 2) {
+                parsedToken = Number.parseInt(usedToken);
+              }
+              return accTokens + parsedToken;
+            }, 0);
+            const previousPartialUsed = Math.ceil(previousUsedTokens * (1 - percentageInCurrent));
+            const usedTokens = previousPartialUsed + currentUsedTokens;
+            const remaining = tokens - usedTokens;
+            async function sync() {
+              const res = await Promise.all(dbs.map((s) => s.request));
+              const allCurrentIds = Array.from(
+                new Set(
+                  res.flatMap(([current2]) => current2).reduce((acc, curr, index) => {
+                    if (index % 2 === 0) {
+                      acc.push(curr);
+                    }
+                    return acc;
+                  }, [])
+                ).values()
+              );
+              for (const db of dbs) {
+                const [current2, _previous, _success] = await db.request;
+                const dbIds = current2.reduce((ids, currentId, index) => {
+                  if (index % 2 === 0) {
+                    ids.push(currentId);
+                  }
+                  return ids;
+                }, []);
+                const usedDbTokens = current2.reduce((accTokens, usedToken, index) => {
+                  let parsedToken = 0;
+                  if (index % 2) {
+                    parsedToken = Number.parseInt(usedToken);
+                  }
+                  return accTokens + parsedToken;
+                }, 0);
+                if (usedDbTokens >= tokens) {
+                  continue;
+                }
+                const diff = allCurrentIds.filter((id) => !dbIds.includes(id));
+                if (diff.length === 0) {
+                  continue;
+                }
+                for (const requestId2 of diff) {
+                  await db.redis.hset(currentKey, { [requestId2]: incrementBy });
+                }
+              }
+            }
+            const reset = (currentWindow + 1) * windowDuration;
+            if (ctx.cache && !success) {
+              ctx.cache.blockUntil(identifier, reset);
+            }
+            return {
+              success: Boolean(success),
+              limit: tokens,
+              remaining: Math.max(0, remaining),
+              reset,
+              pending: sync()
+            };
+          },
+          async getRemaining(ctx, identifier) {
+            const now = Date.now();
+            const currentWindow = Math.floor(now / windowSize);
+            const currentKey = [identifier, currentWindow].join(":");
+            const previousWindow = currentWindow - 1;
+            const previousKey = [identifier, previousWindow].join(":");
+            const dbs = ctx.regionContexts.map((regionContext) => ({
+              redis: regionContext.redis,
+              request: safeEval(
+                regionContext,
+                slidingWindowRemainingTokensScript,
+                "getRemainingHash",
+                [currentKey, previousKey],
+                [now, windowSize]
+                // lua seems to return `1` for true and `null` for false
+              )
+            }));
+            const usedTokens = await Promise.any(dbs.map((s) => s.request));
+            return Math.max(0, tokens - usedTokens);
+          },
+          async resetTokens(ctx, identifier) {
+            const pattern = [identifier, "*"].join(":");
+            if (ctx.cache) {
+              ctx.cache.pop(identifier);
+            }
+            await Promise.all(ctx.regionContexts.map((regionContext) => {
+              safeEval(
+                regionContext,
+                resetScript,
+                "resetHash",
+                [pattern],
+                [null]
+              );
+            }));
+          }
+        });
+      }
+    };
+    var fixedWindowLimitScript2 = `
+  local key           = KEYS[1]
+  local window        = ARGV[1]
+  local incrementBy   = ARGV[2] -- increment rate per request at a given value, default is 1
+
+  local r = redis.call("INCRBY", key, incrementBy)
+  if r == tonumber(incrementBy) then
+  -- The first time this key is set, the value will be equal to incrementBy.
+  -- So we only need the expire command once
+  redis.call("PEXPIRE", key, window)
+  end
+
+  return r
+`;
+    var fixedWindowRemainingTokensScript2 = `
+      local key = KEYS[1]
+      local tokens = 0
+
+      local value = redis.call('GET', key)
+      if value then
+          tokens = value
+      end
+      return tokens
+    `;
+    var slidingWindowLimitScript2 = `
+  local currentKey  = KEYS[1]           -- identifier including prefixes
+  local previousKey = KEYS[2]           -- key of the previous bucket
+  local tokens      = tonumber(ARGV[1]) -- tokens per window
+  local now         = ARGV[2]           -- current timestamp in milliseconds
+  local window      = ARGV[3]           -- interval in milliseconds
+  local incrementBy = ARGV[4]           -- increment rate per request at a given value, default is 1
+
+  local requestsInCurrentWindow = redis.call("GET", currentKey)
+  if requestsInCurrentWindow == false then
+    requestsInCurrentWindow = 0
+  end
+
+  local requestsInPreviousWindow = redis.call("GET", previousKey)
+  if requestsInPreviousWindow == false then
+    requestsInPreviousWindow = 0
+  end
+  local percentageInCurrent = ( now % window ) / window
+  -- weighted requests to consider from the previous window
+  requestsInPreviousWindow = math.floor(( 1 - percentageInCurrent ) * requestsInPreviousWindow)
+  if requestsInPreviousWindow + requestsInCurrentWindow >= tokens then
+    return -1
+  end
+
+  local newValue = redis.call("INCRBY", currentKey, incrementBy)
+  if newValue == tonumber(incrementBy) then
+    -- The first time this key is set, the value will be equal to incrementBy.
+    -- So we only need the expire command once
+    redis.call("PEXPIRE", currentKey, window * 2 + 1000) -- Enough time to overlap with a new window + 1 second
+  end
+  return tokens - ( newValue + requestsInPreviousWindow )
+`;
+    var slidingWindowRemainingTokensScript2 = `
+  local currentKey  = KEYS[1]           -- identifier including prefixes
+  local previousKey = KEYS[2]           -- key of the previous bucket
+  local now         = ARGV[1]           -- current timestamp in milliseconds
+  local window      = ARGV[2]           -- interval in milliseconds
+
+  local requestsInCurrentWindow = redis.call("GET", currentKey)
+  if requestsInCurrentWindow == false then
+    requestsInCurrentWindow = 0
+  end
+
+  local requestsInPreviousWindow = redis.call("GET", previousKey)
+  if requestsInPreviousWindow == false then
+    requestsInPreviousWindow = 0
+  end
+
+  local percentageInCurrent = ( now % window ) / window
+  -- weighted requests to consider from the previous window
+  requestsInPreviousWindow = math.floor(( 1 - percentageInCurrent ) * requestsInPreviousWindow)
+
+  return requestsInPreviousWindow + requestsInCurrentWindow
+`;
+    var tokenBucketLimitScript = `
+  local key         = KEYS[1]           -- identifier including prefixes
+  local maxTokens   = tonumber(ARGV[1]) -- maximum number of tokens
+  local interval    = tonumber(ARGV[2]) -- size of the window in milliseconds
+  local refillRate  = tonumber(ARGV[3]) -- how many tokens are refilled after each interval
+  local now         = tonumber(ARGV[4]) -- current timestamp in milliseconds
+  local incrementBy = tonumber(ARGV[5]) -- how many tokens to consume, default is 1
+        
+  local bucket = redis.call("HMGET", key, "refilledAt", "tokens")
+        
+  local refilledAt
+  local tokens
+
+  if bucket[1] == false then
+    refilledAt = now
+    tokens = maxTokens
+  else
+    refilledAt = tonumber(bucket[1])
+    tokens = tonumber(bucket[2])
+  end
+        
+  if now >= refilledAt + interval then
+    local numRefills = math.floor((now - refilledAt) / interval)
+    tokens = math.min(maxTokens, tokens + numRefills * refillRate)
+
+    refilledAt = refilledAt + numRefills * interval
+  end
+
+  if tokens == 0 then
+    return {-1, refilledAt + interval}
+  end
+
+  local remaining = tokens - incrementBy
+  local expireAt = math.ceil(((maxTokens - remaining) / refillRate)) * interval
+        
+  redis.call("HSET", key, "refilledAt", refilledAt, "tokens", remaining)
+  redis.call("PEXPIRE", key, expireAt)
+  return {remaining, refilledAt + interval}
+`;
+    var tokenBucketRemainingTokensScript = `
+  local key         = KEYS[1]
+  local maxTokens   = tonumber(ARGV[1])
+        
+  local bucket = redis.call("HMGET", key, "tokens")
+
+  if bucket[1] == false then
+    return maxTokens
+  end
+        
+  return tonumber(bucket[1])
+`;
+    var cachedFixedWindowLimitScript = `
+  local key     = KEYS[1]
+  local window  = ARGV[1]
+  local incrementBy   = ARGV[2] -- increment rate per request at a given value, default is 1
+
+  local r = redis.call("INCRBY", key, incrementBy)
+  if r == incrementBy then
+  -- The first time this key is set, the value will be equal to incrementBy.
+  -- So we only need the expire command once
+  redis.call("PEXPIRE", key, window)
+  end
+      
+  return r
+`;
+    var cachedFixedWindowRemainingTokenScript = `
+  local key = KEYS[1]
+  local tokens = 0
+
+  local value = redis.call('GET', key)
+  if value then
+      tokens = value
+  end
+  return tokens
+`;
+    var RegionRatelimit = class extends Ratelimit2 {
+      /**
+       * Create a new Ratelimit instance by providing a `@upstash/redis` instance and the algorithm of your choice.
+       */
+      constructor(config) {
+        super({
+          prefix: config.prefix,
+          limiter: config.limiter,
+          timeout: config.timeout,
+          analytics: config.analytics,
+          ctx: {
+            redis: config.redis,
+            scriptHashes: {},
+            cacheScripts: config.cacheScripts ?? true
+          },
+          ephemeralCache: config.ephemeralCache,
+          enableProtection: config.enableProtection,
+          denyListThreshold: config.denyListThreshold
+        });
+      }
+      /**
+       * Each request inside a fixed time increases a counter.
+       * Once the counter reaches the maximum allowed number, all further requests are
+       * rejected.
+       *
+       * **Pro:**
+       *
+       * - Newer requests are not starved by old ones.
+       * - Low storage cost.
+       *
+       * **Con:**
+       *
+       * A burst of requests near the boundary of a window can result in a very
+       * high request rate because two windows will be filled with requests quickly.
+       *
+       * @param tokens - How many requests a user can make in each time window.
+       * @param window - A fixed timeframe
+       */
+      static fixedWindow(tokens, window2) {
+        const windowDuration = ms(window2);
+        return () => ({
+          async limit(ctx, identifier, rate) {
+            const bucket = Math.floor(Date.now() / windowDuration);
+            const key = [identifier, bucket].join(":");
+            if (ctx.cache) {
+              const { blocked, reset: reset2 } = ctx.cache.isBlocked(identifier);
+              if (blocked) {
+                return {
+                  success: false,
+                  limit: tokens,
+                  remaining: 0,
+                  reset: reset2,
+                  pending: Promise.resolve(),
+                  reason: "cacheBlock"
+                };
+              }
+            }
+            const incrementBy = rate ? Math.max(1, rate) : 1;
+            const usedTokensAfterUpdate = await safeEval(
+              ctx,
+              fixedWindowLimitScript2,
+              "limitHash",
+              [key],
+              [windowDuration, incrementBy]
+            );
+            const success = usedTokensAfterUpdate <= tokens;
+            const remainingTokens = Math.max(0, tokens - usedTokensAfterUpdate);
+            const reset = (bucket + 1) * windowDuration;
+            if (ctx.cache && !success) {
+              ctx.cache.blockUntil(identifier, reset);
+            }
+            return {
+              success,
+              limit: tokens,
+              remaining: remainingTokens,
+              reset,
+              pending: Promise.resolve()
+            };
+          },
+          async getRemaining(ctx, identifier) {
+            const bucket = Math.floor(Date.now() / windowDuration);
+            const key = [identifier, bucket].join(":");
+            const usedTokens = await safeEval(
+              ctx,
+              fixedWindowRemainingTokensScript2,
+              "getRemainingHash",
+              [key],
+              [null]
+            );
+            return Math.max(0, tokens - usedTokens);
+          },
+          async resetTokens(ctx, identifier) {
+            const pattern = [identifier, "*"].join(":");
+            if (ctx.cache) {
+              ctx.cache.pop(identifier);
+            }
+            await safeEval(
+              ctx,
+              resetScript,
+              "resetHash",
+              [pattern],
+              [null]
+            );
+          }
+        });
+      }
+      /**
+       * Combined approach of `slidingLogs` and `fixedWindow` with lower storage
+       * costs than `slidingLogs` and improved boundary behavior by calculating a
+       * weighted score between two windows.
+       *
+       * **Pro:**
+       *
+       * Good performance allows this to scale to very high loads.
+       *
+       * **Con:**
+       *
+       * Nothing major.
+       *
+       * @param tokens - How many requests a user can make in each time window.
+       * @param window - The duration in which the user can max X requests.
+       */
+      static slidingWindow(tokens, window2) {
+        const windowSize = ms(window2);
+        return () => ({
+          async limit(ctx, identifier, rate) {
+            const now = Date.now();
+            const currentWindow = Math.floor(now / windowSize);
+            const currentKey = [identifier, currentWindow].join(":");
+            const previousWindow = currentWindow - 1;
+            const previousKey = [identifier, previousWindow].join(":");
+            if (ctx.cache) {
+              const { blocked, reset: reset2 } = ctx.cache.isBlocked(identifier);
+              if (blocked) {
+                return {
+                  success: false,
+                  limit: tokens,
+                  remaining: 0,
+                  reset: reset2,
+                  pending: Promise.resolve(),
+                  reason: "cacheBlock"
+                };
+              }
+            }
+            const incrementBy = rate ? Math.max(1, rate) : 1;
+            const remainingTokens = await safeEval(
+              ctx,
+              slidingWindowLimitScript2,
+              "limitHash",
+              [currentKey, previousKey],
+              [tokens, now, windowSize, incrementBy]
+            );
+            const success = remainingTokens >= 0;
+            const reset = (currentWindow + 1) * windowSize;
+            if (ctx.cache && !success) {
+              ctx.cache.blockUntil(identifier, reset);
+            }
+            return {
+              success,
+              limit: tokens,
+              remaining: Math.max(0, remainingTokens),
+              reset,
+              pending: Promise.resolve()
+            };
+          },
+          async getRemaining(ctx, identifier) {
+            const now = Date.now();
+            const currentWindow = Math.floor(now / windowSize);
+            const currentKey = [identifier, currentWindow].join(":");
+            const previousWindow = currentWindow - 1;
+            const previousKey = [identifier, previousWindow].join(":");
+            const usedTokens = await safeEval(
+              ctx,
+              slidingWindowRemainingTokensScript2,
+              "getRemainingHash",
+              [currentKey, previousKey],
+              [now, windowSize]
+            );
+            return Math.max(0, tokens - usedTokens);
+          },
+          async resetTokens(ctx, identifier) {
+            const pattern = [identifier, "*"].join(":");
+            if (ctx.cache) {
+              ctx.cache.pop(identifier);
+            }
+            await safeEval(
+              ctx,
+              resetScript,
+              "resetHash",
+              [pattern],
+              [null]
+            );
+          }
+        });
+      }
+      /**
+       * You have a bucket filled with `{maxTokens}` tokens that refills constantly
+       * at `{refillRate}` per `{interval}`.
+       * Every request will remove one token from the bucket and if there is no
+       * token to take, the request is rejected.
+       *
+       * **Pro:**
+       *
+       * - Bursts of requests are smoothed out and you can process them at a constant
+       * rate.
+       * - Allows to set a higher initial burst limit by setting `maxTokens` higher
+       * than `refillRate`
+       */
+      static tokenBucket(refillRate, interval, maxTokens) {
+        const intervalDuration = ms(interval);
+        return () => ({
+          async limit(ctx, identifier, rate) {
+            if (ctx.cache) {
+              const { blocked, reset: reset2 } = ctx.cache.isBlocked(identifier);
+              if (blocked) {
+                return {
+                  success: false,
+                  limit: maxTokens,
+                  remaining: 0,
+                  reset: reset2,
+                  pending: Promise.resolve(),
+                  reason: "cacheBlock"
+                };
+              }
+            }
+            const now = Date.now();
+            const incrementBy = rate ? Math.max(1, rate) : 1;
+            const [remaining, reset] = await safeEval(
+              ctx,
+              tokenBucketLimitScript,
+              "limitHash",
+              [identifier],
+              [maxTokens, intervalDuration, refillRate, now, incrementBy]
+            );
+            const success = remaining >= 0;
+            if (ctx.cache && !success) {
+              ctx.cache.blockUntil(identifier, reset);
+            }
+            return {
+              success,
+              limit: maxTokens,
+              remaining,
+              reset,
+              pending: Promise.resolve()
+            };
+          },
+          async getRemaining(ctx, identifier) {
+            const remainingTokens = await safeEval(
+              ctx,
+              tokenBucketRemainingTokensScript,
+              "getRemainingHash",
+              [identifier],
+              [maxTokens]
+            );
+            return remainingTokens;
+          },
+          async resetTokens(ctx, identifier) {
+            const pattern = identifier;
+            if (ctx.cache) {
+              ctx.cache.pop(identifier);
+            }
+            await safeEval(
+              ctx,
+              resetScript,
+              "resetHash",
+              [pattern],
+              [null]
+            );
+          }
+        });
+      }
+      /**
+       * cachedFixedWindow first uses the local cache to decide if a request may pass and then updates
+       * it asynchronously.
+       * This is experimental and not yet recommended for production use.
+       *
+       * @experimental
+       *
+       * Each request inside a fixed time increases a counter.
+       * Once the counter reaches the maximum allowed number, all further requests are
+       * rejected.
+       *
+       * **Pro:**
+       *
+       * - Newer requests are not starved by old ones.
+       * - Low storage cost.
+       *
+       * **Con:**
+       *
+       * A burst of requests near the boundary of a window can result in a very
+       * high request rate because two windows will be filled with requests quickly.
+       *
+       * @param tokens - How many requests a user can make in each time window.
+       * @param window - A fixed timeframe
+       */
+      static cachedFixedWindow(tokens, window2) {
+        const windowDuration = ms(window2);
+        return () => ({
+          async limit(ctx, identifier, rate) {
+            if (!ctx.cache) {
+              throw new Error("This algorithm requires a cache");
+            }
+            const bucket = Math.floor(Date.now() / windowDuration);
+            const key = [identifier, bucket].join(":");
+            const reset = (bucket + 1) * windowDuration;
+            const incrementBy = rate ? Math.max(1, rate) : 1;
+            const hit = typeof ctx.cache.get(key) === "number";
+            if (hit) {
+              const cachedTokensAfterUpdate = ctx.cache.incr(key);
+              const success = cachedTokensAfterUpdate < tokens;
+              const pending = success ? safeEval(
+                ctx,
+                cachedFixedWindowLimitScript,
+                "limitHash",
+                [key],
+                [windowDuration, incrementBy]
+              ) : Promise.resolve();
+              return {
+                success,
+                limit: tokens,
+                remaining: tokens - cachedTokensAfterUpdate,
+                reset,
+                pending
+              };
+            }
+            const usedTokensAfterUpdate = await safeEval(
+              ctx,
+              cachedFixedWindowLimitScript,
+              "limitHash",
+              [key],
+              [windowDuration, incrementBy]
+            );
+            ctx.cache.set(key, usedTokensAfterUpdate);
+            const remaining = tokens - usedTokensAfterUpdate;
+            return {
+              success: remaining >= 0,
+              limit: tokens,
+              remaining,
+              reset,
+              pending: Promise.resolve()
+            };
+          },
+          async getRemaining(ctx, identifier) {
+            if (!ctx.cache) {
+              throw new Error("This algorithm requires a cache");
+            }
+            const bucket = Math.floor(Date.now() / windowDuration);
+            const key = [identifier, bucket].join(":");
+            const hit = typeof ctx.cache.get(key) === "number";
+            if (hit) {
+              const cachedUsedTokens = ctx.cache.get(key) ?? 0;
+              return Math.max(0, tokens - cachedUsedTokens);
+            }
+            const usedTokens = await safeEval(
+              ctx,
+              cachedFixedWindowRemainingTokenScript,
+              "getRemainingHash",
+              [key],
+              [null]
+            );
+            return Math.max(0, tokens - usedTokens);
+          },
+          async resetTokens(ctx, identifier) {
+            if (!ctx.cache) {
+              throw new Error("This algorithm requires a cache");
+            }
+            const bucket = Math.floor(Date.now() / windowDuration);
+            const key = [identifier, bucket].join(":");
+            ctx.cache.pop(key);
+            const pattern = [identifier, "*"].join(":");
+            await safeEval(
+              ctx,
+              resetScript,
+              "resetHash",
+              [pattern],
+              [null]
+            );
+          }
+        });
+      }
+    };
+  }
+});
+
+// (disabled):crypto
+var require_crypto = __commonJS({
+  "(disabled):crypto"() {
+    init_checked_fetch();
+    init_modules_watch_stub();
+  }
+});
+
+// node_modules/crypto-js/core.js
+var require_core = __commonJS({
+  "node_modules/crypto-js/core.js"(exports, module) {
+    init_checked_fetch();
+    init_modules_watch_stub();
+    (function(root, factory) {
+      if (typeof exports === "object") {
+        module.exports = exports = factory();
+      } else if (typeof define === "function" && define.amd) {
+        define([], factory);
+      } else {
+        root.CryptoJS = factory();
+      }
+    })(exports, function() {
+      var CryptoJS = CryptoJS || function(Math2, undefined2) {
+        var crypto;
+        if (typeof window !== "undefined" && window.crypto) {
+          crypto = window.crypto;
+        }
+        if (typeof self !== "undefined" && self.crypto) {
+          crypto = self.crypto;
+        }
+        if (typeof globalThis !== "undefined" && globalThis.crypto) {
+          crypto = globalThis.crypto;
+        }
+        if (!crypto && typeof window !== "undefined" && window.msCrypto) {
+          crypto = window.msCrypto;
+        }
+        if (!crypto && typeof global !== "undefined" && global.crypto) {
+          crypto = global.crypto;
+        }
+        if (!crypto && typeof __require === "function") {
+          try {
+            crypto = require_crypto();
+          } catch (err) {
+          }
+        }
+        var cryptoSecureRandomInt = function() {
+          if (crypto) {
+            if (typeof crypto.getRandomValues === "function") {
+              try {
+                return crypto.getRandomValues(new Uint32Array(1))[0];
+              } catch (err) {
+              }
+            }
+            if (typeof crypto.randomBytes === "function") {
+              try {
+                return crypto.randomBytes(4).readInt32LE();
+              } catch (err) {
+              }
+            }
+          }
+          throw new Error("Native crypto module could not be used to get secure random number.");
+        };
+        var create = Object.create || function() {
+          function F() {
+          }
+          return function(obj) {
+            var subtype;
+            F.prototype = obj;
+            subtype = new F();
+            F.prototype = null;
+            return subtype;
+          };
+        }();
+        var C = {};
+        var C_lib = C.lib = {};
+        var Base = C_lib.Base = function() {
+          return {
+            /**
+             * Creates a new object that inherits from this object.
+             *
+             * @param {Object} overrides Properties to copy into the new object.
+             *
+             * @return {Object} The new object.
+             *
+             * @static
+             *
+             * @example
+             *
+             *     var MyType = CryptoJS.lib.Base.extend({
+             *         field: 'value',
+             *
+             *         method: function () {
+             *         }
+             *     });
+             */
+            extend: function(overrides) {
+              var subtype = create(this);
+              if (overrides) {
+                subtype.mixIn(overrides);
+              }
+              if (!subtype.hasOwnProperty("init") || this.init === subtype.init) {
+                subtype.init = function() {
+                  subtype.$super.init.apply(this, arguments);
+                };
+              }
+              subtype.init.prototype = subtype;
+              subtype.$super = this;
+              return subtype;
+            },
+            /**
+             * Extends this object and runs the init method.
+             * Arguments to create() will be passed to init().
+             *
+             * @return {Object} The new object.
+             *
+             * @static
+             *
+             * @example
+             *
+             *     var instance = MyType.create();
+             */
+            create: function() {
+              var instance = this.extend();
+              instance.init.apply(instance, arguments);
+              return instance;
+            },
+            /**
+             * Initializes a newly created object.
+             * Override this method to add some logic when your objects are created.
+             *
+             * @example
+             *
+             *     var MyType = CryptoJS.lib.Base.extend({
+             *         init: function () {
+             *             // ...
+             *         }
+             *     });
+             */
+            init: function() {
+            },
+            /**
+             * Copies properties into this object.
+             *
+             * @param {Object} properties The properties to mix in.
+             *
+             * @example
+             *
+             *     MyType.mixIn({
+             *         field: 'value'
+             *     });
+             */
+            mixIn: function(properties) {
+              for (var propertyName in properties) {
+                if (properties.hasOwnProperty(propertyName)) {
+                  this[propertyName] = properties[propertyName];
+                }
+              }
+              if (properties.hasOwnProperty("toString")) {
+                this.toString = properties.toString;
+              }
+            },
+            /**
+             * Creates a copy of this object.
+             *
+             * @return {Object} The clone.
+             *
+             * @example
+             *
+             *     var clone = instance.clone();
+             */
+            clone: function() {
+              return this.init.prototype.extend(this);
+            }
+          };
+        }();
+        var WordArray = C_lib.WordArray = Base.extend({
+          /**
+           * Initializes a newly created word array.
+           *
+           * @param {Array} words (Optional) An array of 32-bit words.
+           * @param {number} sigBytes (Optional) The number of significant bytes in the words.
+           *
+           * @example
+           *
+           *     var wordArray = CryptoJS.lib.WordArray.create();
+           *     var wordArray = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607]);
+           *     var wordArray = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607], 6);
+           */
+          init: function(words, sigBytes) {
+            words = this.words = words || [];
+            if (sigBytes != undefined2) {
+              this.sigBytes = sigBytes;
+            } else {
+              this.sigBytes = words.length * 4;
+            }
+          },
+          /**
+           * Converts this word array to a string.
+           *
+           * @param {Encoder} encoder (Optional) The encoding strategy to use. Default: CryptoJS.enc.Hex
+           *
+           * @return {string} The stringified word array.
+           *
+           * @example
+           *
+           *     var string = wordArray + '';
+           *     var string = wordArray.toString();
+           *     var string = wordArray.toString(CryptoJS.enc.Utf8);
+           */
+          toString: function(encoder) {
+            return (encoder || Hex).stringify(this);
+          },
+          /**
+           * Concatenates a word array to this word array.
+           *
+           * @param {WordArray} wordArray The word array to append.
+           *
+           * @return {WordArray} This word array.
+           *
+           * @example
+           *
+           *     wordArray1.concat(wordArray2);
+           */
+          concat: function(wordArray) {
+            var thisWords = this.words;
+            var thatWords = wordArray.words;
+            var thisSigBytes = this.sigBytes;
+            var thatSigBytes = wordArray.sigBytes;
+            this.clamp();
+            if (thisSigBytes % 4) {
+              for (var i = 0; i < thatSigBytes; i++) {
+                var thatByte = thatWords[i >>> 2] >>> 24 - i % 4 * 8 & 255;
+                thisWords[thisSigBytes + i >>> 2] |= thatByte << 24 - (thisSigBytes + i) % 4 * 8;
+              }
+            } else {
+              for (var j = 0; j < thatSigBytes; j += 4) {
+                thisWords[thisSigBytes + j >>> 2] = thatWords[j >>> 2];
+              }
+            }
+            this.sigBytes += thatSigBytes;
+            return this;
+          },
+          /**
+           * Removes insignificant bits.
+           *
+           * @example
+           *
+           *     wordArray.clamp();
+           */
+          clamp: function() {
+            var words = this.words;
+            var sigBytes = this.sigBytes;
+            words[sigBytes >>> 2] &= 4294967295 << 32 - sigBytes % 4 * 8;
+            words.length = Math2.ceil(sigBytes / 4);
+          },
+          /**
+           * Creates a copy of this word array.
+           *
+           * @return {WordArray} The clone.
+           *
+           * @example
+           *
+           *     var clone = wordArray.clone();
+           */
+          clone: function() {
+            var clone = Base.clone.call(this);
+            clone.words = this.words.slice(0);
+            return clone;
+          },
+          /**
+           * Creates a word array filled with random bytes.
+           *
+           * @param {number} nBytes The number of random bytes to generate.
+           *
+           * @return {WordArray} The random word array.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var wordArray = CryptoJS.lib.WordArray.random(16);
+           */
+          random: function(nBytes) {
+            var words = [];
+            for (var i = 0; i < nBytes; i += 4) {
+              words.push(cryptoSecureRandomInt());
+            }
+            return new WordArray.init(words, nBytes);
+          }
+        });
+        var C_enc = C.enc = {};
+        var Hex = C_enc.Hex = {
+          /**
+           * Converts a word array to a hex string.
+           *
+           * @param {WordArray} wordArray The word array.
+           *
+           * @return {string} The hex string.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var hexString = CryptoJS.enc.Hex.stringify(wordArray);
+           */
+          stringify: function(wordArray) {
+            var words = wordArray.words;
+            var sigBytes = wordArray.sigBytes;
+            var hexChars = [];
+            for (var i = 0; i < sigBytes; i++) {
+              var bite = words[i >>> 2] >>> 24 - i % 4 * 8 & 255;
+              hexChars.push((bite >>> 4).toString(16));
+              hexChars.push((bite & 15).toString(16));
+            }
+            return hexChars.join("");
+          },
+          /**
+           * Converts a hex string to a word array.
+           *
+           * @param {string} hexStr The hex string.
+           *
+           * @return {WordArray} The word array.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var wordArray = CryptoJS.enc.Hex.parse(hexString);
+           */
+          parse: function(hexStr) {
+            var hexStrLength = hexStr.length;
+            var words = [];
+            for (var i = 0; i < hexStrLength; i += 2) {
+              words[i >>> 3] |= parseInt(hexStr.substr(i, 2), 16) << 24 - i % 8 * 4;
+            }
+            return new WordArray.init(words, hexStrLength / 2);
+          }
+        };
+        var Latin1 = C_enc.Latin1 = {
+          /**
+           * Converts a word array to a Latin1 string.
+           *
+           * @param {WordArray} wordArray The word array.
+           *
+           * @return {string} The Latin1 string.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var latin1String = CryptoJS.enc.Latin1.stringify(wordArray);
+           */
+          stringify: function(wordArray) {
+            var words = wordArray.words;
+            var sigBytes = wordArray.sigBytes;
+            var latin1Chars = [];
+            for (var i = 0; i < sigBytes; i++) {
+              var bite = words[i >>> 2] >>> 24 - i % 4 * 8 & 255;
+              latin1Chars.push(String.fromCharCode(bite));
+            }
+            return latin1Chars.join("");
+          },
+          /**
+           * Converts a Latin1 string to a word array.
+           *
+           * @param {string} latin1Str The Latin1 string.
+           *
+           * @return {WordArray} The word array.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var wordArray = CryptoJS.enc.Latin1.parse(latin1String);
+           */
+          parse: function(latin1Str) {
+            var latin1StrLength = latin1Str.length;
+            var words = [];
+            for (var i = 0; i < latin1StrLength; i++) {
+              words[i >>> 2] |= (latin1Str.charCodeAt(i) & 255) << 24 - i % 4 * 8;
+            }
+            return new WordArray.init(words, latin1StrLength);
+          }
+        };
+        var Utf8 = C_enc.Utf8 = {
+          /**
+           * Converts a word array to a UTF-8 string.
+           *
+           * @param {WordArray} wordArray The word array.
+           *
+           * @return {string} The UTF-8 string.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var utf8String = CryptoJS.enc.Utf8.stringify(wordArray);
+           */
+          stringify: function(wordArray) {
+            try {
+              return decodeURIComponent(escape(Latin1.stringify(wordArray)));
+            } catch (e) {
+              throw new Error("Malformed UTF-8 data");
+            }
+          },
+          /**
+           * Converts a UTF-8 string to a word array.
+           *
+           * @param {string} utf8Str The UTF-8 string.
+           *
+           * @return {WordArray} The word array.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var wordArray = CryptoJS.enc.Utf8.parse(utf8String);
+           */
+          parse: function(utf8Str) {
+            return Latin1.parse(unescape(encodeURIComponent(utf8Str)));
+          }
+        };
+        var BufferedBlockAlgorithm = C_lib.BufferedBlockAlgorithm = Base.extend({
+          /**
+           * Resets this block algorithm's data buffer to its initial state.
+           *
+           * @example
+           *
+           *     bufferedBlockAlgorithm.reset();
+           */
+          reset: function() {
+            this._data = new WordArray.init();
+            this._nDataBytes = 0;
+          },
+          /**
+           * Adds new data to this block algorithm's buffer.
+           *
+           * @param {WordArray|string} data The data to append. Strings are converted to a WordArray using UTF-8.
+           *
+           * @example
+           *
+           *     bufferedBlockAlgorithm._append('data');
+           *     bufferedBlockAlgorithm._append(wordArray);
+           */
+          _append: function(data) {
+            if (typeof data == "string") {
+              data = Utf8.parse(data);
+            }
+            this._data.concat(data);
+            this._nDataBytes += data.sigBytes;
+          },
+          /**
+           * Processes available data blocks.
+           *
+           * This method invokes _doProcessBlock(offset), which must be implemented by a concrete subtype.
+           *
+           * @param {boolean} doFlush Whether all blocks and partial blocks should be processed.
+           *
+           * @return {WordArray} The processed data.
+           *
+           * @example
+           *
+           *     var processedData = bufferedBlockAlgorithm._process();
+           *     var processedData = bufferedBlockAlgorithm._process(!!'flush');
+           */
+          _process: function(doFlush) {
+            var processedWords;
+            var data = this._data;
+            var dataWords = data.words;
+            var dataSigBytes = data.sigBytes;
+            var blockSize = this.blockSize;
+            var blockSizeBytes = blockSize * 4;
+            var nBlocksReady = dataSigBytes / blockSizeBytes;
+            if (doFlush) {
+              nBlocksReady = Math2.ceil(nBlocksReady);
+            } else {
+              nBlocksReady = Math2.max((nBlocksReady | 0) - this._minBufferSize, 0);
+            }
+            var nWordsReady = nBlocksReady * blockSize;
+            var nBytesReady = Math2.min(nWordsReady * 4, dataSigBytes);
+            if (nWordsReady) {
+              for (var offset = 0; offset < nWordsReady; offset += blockSize) {
+                this._doProcessBlock(dataWords, offset);
+              }
+              processedWords = dataWords.splice(0, nWordsReady);
+              data.sigBytes -= nBytesReady;
+            }
+            return new WordArray.init(processedWords, nBytesReady);
+          },
+          /**
+           * Creates a copy of this object.
+           *
+           * @return {Object} The clone.
+           *
+           * @example
+           *
+           *     var clone = bufferedBlockAlgorithm.clone();
+           */
+          clone: function() {
+            var clone = Base.clone.call(this);
+            clone._data = this._data.clone();
+            return clone;
+          },
+          _minBufferSize: 0
+        });
+        var Hasher = C_lib.Hasher = BufferedBlockAlgorithm.extend({
+          /**
+           * Configuration options.
+           */
+          cfg: Base.extend(),
+          /**
+           * Initializes a newly created hasher.
+           *
+           * @param {Object} cfg (Optional) The configuration options to use for this hash computation.
+           *
+           * @example
+           *
+           *     var hasher = CryptoJS.algo.SHA256.create();
+           */
+          init: function(cfg) {
+            this.cfg = this.cfg.extend(cfg);
+            this.reset();
+          },
+          /**
+           * Resets this hasher to its initial state.
+           *
+           * @example
+           *
+           *     hasher.reset();
+           */
+          reset: function() {
+            BufferedBlockAlgorithm.reset.call(this);
+            this._doReset();
+          },
+          /**
+           * Updates this hasher with a message.
+           *
+           * @param {WordArray|string} messageUpdate The message to append.
+           *
+           * @return {Hasher} This hasher.
+           *
+           * @example
+           *
+           *     hasher.update('message');
+           *     hasher.update(wordArray);
+           */
+          update: function(messageUpdate) {
+            this._append(messageUpdate);
+            this._process();
+            return this;
+          },
+          /**
+           * Finalizes the hash computation.
+           * Note that the finalize operation is effectively a destructive, read-once operation.
+           *
+           * @param {WordArray|string} messageUpdate (Optional) A final message update.
+           *
+           * @return {WordArray} The hash.
+           *
+           * @example
+           *
+           *     var hash = hasher.finalize();
+           *     var hash = hasher.finalize('message');
+           *     var hash = hasher.finalize(wordArray);
+           */
+          finalize: function(messageUpdate) {
+            if (messageUpdate) {
+              this._append(messageUpdate);
+            }
+            var hash = this._doFinalize();
+            return hash;
+          },
+          blockSize: 512 / 32,
+          /**
+           * Creates a shortcut function to a hasher's object interface.
+           *
+           * @param {Hasher} hasher The hasher to create a helper for.
+           *
+           * @return {Function} The shortcut function.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var SHA256 = CryptoJS.lib.Hasher._createHelper(CryptoJS.algo.SHA256);
+           */
+          _createHelper: function(hasher) {
+            return function(message, cfg) {
+              return new hasher.init(cfg).finalize(message);
+            };
+          },
+          /**
+           * Creates a shortcut function to the HMAC's object interface.
+           *
+           * @param {Hasher} hasher The hasher to use in this HMAC helper.
+           *
+           * @return {Function} The shortcut function.
+           *
+           * @static
+           *
+           * @example
+           *
+           *     var HmacSHA256 = CryptoJS.lib.Hasher._createHmacHelper(CryptoJS.algo.SHA256);
+           */
+          _createHmacHelper: function(hasher) {
+            return function(message, key) {
+              return new C_algo.HMAC.init(hasher, key).finalize(message);
+            };
+          }
+        });
+        var C_algo = C.algo = {};
+        return C;
+      }(Math);
+      return CryptoJS;
+    });
+  }
+});
+
+// node_modules/crypto-js/enc-hex.js
+var require_enc_hex = __commonJS({
+  "node_modules/crypto-js/enc-hex.js"(exports, module) {
+    init_checked_fetch();
+    init_modules_watch_stub();
+    (function(root, factory) {
+      if (typeof exports === "object") {
+        module.exports = exports = factory(require_core());
+      } else if (typeof define === "function" && define.amd) {
+        define(["./core"], factory);
+      } else {
+        factory(root.CryptoJS);
+      }
+    })(exports, function(CryptoJS) {
+      return CryptoJS.enc.Hex;
+    });
+  }
+});
+
+// node_modules/crypto-js/sha1.js
+var require_sha1 = __commonJS({
+  "node_modules/crypto-js/sha1.js"(exports, module) {
+    init_checked_fetch();
+    init_modules_watch_stub();
+    (function(root, factory) {
+      if (typeof exports === "object") {
+        module.exports = exports = factory(require_core());
+      } else if (typeof define === "function" && define.amd) {
+        define(["./core"], factory);
+      } else {
+        factory(root.CryptoJS);
+      }
+    })(exports, function(CryptoJS) {
+      (function() {
+        var C = CryptoJS;
+        var C_lib = C.lib;
+        var WordArray = C_lib.WordArray;
+        var Hasher = C_lib.Hasher;
+        var C_algo = C.algo;
+        var W = [];
+        var SHA1 = C_algo.SHA1 = Hasher.extend({
+          _doReset: function() {
+            this._hash = new WordArray.init([
+              1732584193,
+              4023233417,
+              2562383102,
+              271733878,
+              3285377520
+            ]);
+          },
+          _doProcessBlock: function(M, offset) {
+            var H = this._hash.words;
+            var a2 = H[0];
+            var b = H[1];
+            var c = H[2];
+            var d = H[3];
+            var e = H[4];
+            for (var i = 0; i < 80; i++) {
+              if (i < 16) {
+                W[i] = M[offset + i] | 0;
+              } else {
+                var n = W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16];
+                W[i] = n << 1 | n >>> 31;
+              }
+              var t = (a2 << 5 | a2 >>> 27) + e + W[i];
+              if (i < 20) {
+                t += (b & c | ~b & d) + 1518500249;
+              } else if (i < 40) {
+                t += (b ^ c ^ d) + 1859775393;
+              } else if (i < 60) {
+                t += (b & c | b & d | c & d) - 1894007588;
+              } else {
+                t += (b ^ c ^ d) - 899497514;
+              }
+              e = d;
+              d = c;
+              c = b << 30 | b >>> 2;
+              b = a2;
+              a2 = t;
+            }
+            H[0] = H[0] + a2 | 0;
+            H[1] = H[1] + b | 0;
+            H[2] = H[2] + c | 0;
+            H[3] = H[3] + d | 0;
+            H[4] = H[4] + e | 0;
+          },
+          _doFinalize: function() {
+            var data = this._data;
+            var dataWords = data.words;
+            var nBitsTotal = this._nDataBytes * 8;
+            var nBitsLeft = data.sigBytes * 8;
+            dataWords[nBitsLeft >>> 5] |= 128 << 24 - nBitsLeft % 32;
+            dataWords[(nBitsLeft + 64 >>> 9 << 4) + 14] = Math.floor(nBitsTotal / 4294967296);
+            dataWords[(nBitsLeft + 64 >>> 9 << 4) + 15] = nBitsTotal;
+            data.sigBytes = dataWords.length * 4;
+            this._process();
+            return this._hash;
+          },
+          clone: function() {
+            var clone = Hasher.clone.call(this);
+            clone._hash = this._hash.clone();
+            return clone;
+          }
+        });
+        C.SHA1 = Hasher._createHelper(SHA1);
+        C.HmacSHA1 = Hasher._createHmacHelper(SHA1);
+      })();
+      return CryptoJS.SHA1;
+    });
+  }
+});
+
+// .wrangler/tmp/bundle-9BAu4g/middleware-loader.entry.ts
+init_checked_fetch();
+init_modules_watch_stub();
+
+// .wrangler/tmp/bundle-9BAu4g/middleware-insertion-facade.js
+init_checked_fetch();
+init_modules_watch_stub();
+
+// index.ts
+init_checked_fetch();
+init_modules_watch_stub();
+var import_ratelimit = __toESM(require_dist2());
+
+// node_modules/@upstash/redis/cloudflare.mjs
+init_checked_fetch();
+init_modules_watch_stub();
+
+// node_modules/@upstash/redis/chunk-QHHA5Z3E.mjs
+init_checked_fetch();
+init_modules_watch_stub();
+var import_enc_hex = __toESM(require_enc_hex(), 1);
+var import_sha1 = __toESM(require_sha1(), 1);
+
+// node_modules/hono/dist/index.js
+init_checked_fetch();
+init_modules_watch_stub();
+
+// node_modules/hono/dist/hono.js
+init_checked_fetch();
+init_modules_watch_stub();
+
+// node_modules/hono/dist/hono-base.js
+init_checked_fetch();
+init_modules_watch_stub();
+
+// node_modules/hono/dist/compose.js
+init_checked_fetch();
+init_modules_watch_stub();
+
+// node_modules/hono/dist/context.js
+init_checked_fetch();
+init_modules_watch_stub();
+
 // node_modules/hono/dist/utils/html.js
+init_checked_fetch();
+init_modules_watch_stub();
 var HtmlEscapedCallbackPhase = {
   Stringify: 1,
   BeforeStream: 2,
@@ -325,7 +2936,13 @@ var compose = (middleware, onError, onNotFound) => {
   };
 };
 
+// node_modules/hono/dist/request.js
+init_checked_fetch();
+init_modules_watch_stub();
+
 // node_modules/hono/dist/utils/body.js
+init_checked_fetch();
+init_modules_watch_stub();
 var parseBody = async (request, options = /* @__PURE__ */ Object.create(null)) => {
   const { all = false, dot = false } = options;
   const headers = request instanceof HonoRequest ? request.raw.headers : request.headers;
@@ -391,6 +3008,8 @@ var handleParsingNestedValues = (form, key, value) => {
 };
 
 // node_modules/hono/dist/utils/url.js
+init_checked_fetch();
+init_modules_watch_stub();
 var splitPath = (path) => {
   const paths = path.split("/");
   if (paths[0] === "") {
@@ -522,7 +3141,7 @@ var checkOptionalParameter = (path) => {
       }
     }
   });
-  return results.filter((v, i, a) => a.indexOf(v) === i);
+  return results.filter((v, i, a2) => a2.indexOf(v) === i);
 };
 var _decodeURI = (value) => {
   if (!/[%+]/.test(value)) {
@@ -711,6 +3330,8 @@ var HonoRequest = class {
 };
 
 // node_modules/hono/dist/router.js
+init_checked_fetch();
+init_modules_watch_stub();
 var METHOD_NAME_ALL = "ALL";
 var METHOD_NAME_ALL_LOWERCASE = "all";
 var METHODS = ["get", "post", "put", "delete", "options", "patch"];
@@ -945,30 +3566,40 @@ var Hono = class {
   };
 };
 
+// node_modules/hono/dist/router/reg-exp-router/index.js
+init_checked_fetch();
+init_modules_watch_stub();
+
+// node_modules/hono/dist/router/reg-exp-router/router.js
+init_checked_fetch();
+init_modules_watch_stub();
+
 // node_modules/hono/dist/router/reg-exp-router/node.js
+init_checked_fetch();
+init_modules_watch_stub();
 var LABEL_REG_EXP_STR = "[^/]+";
 var ONLY_WILDCARD_REG_EXP_STR = ".*";
 var TAIL_WILDCARD_REG_EXP_STR = "(?:|/.*)";
 var PATH_ERROR = Symbol();
 var regExpMetaChars = new Set(".\\+*[^]$()");
-function compareKey(a, b) {
-  if (a.length === 1) {
-    return b.length === 1 ? a < b ? -1 : 1 : -1;
+function compareKey(a2, b) {
+  if (a2.length === 1) {
+    return b.length === 1 ? a2 < b ? -1 : 1 : -1;
   }
   if (b.length === 1) {
     return 1;
   }
-  if (a === ONLY_WILDCARD_REG_EXP_STR || a === TAIL_WILDCARD_REG_EXP_STR) {
+  if (a2 === ONLY_WILDCARD_REG_EXP_STR || a2 === TAIL_WILDCARD_REG_EXP_STR) {
     return 1;
   } else if (b === ONLY_WILDCARD_REG_EXP_STR || b === TAIL_WILDCARD_REG_EXP_STR) {
     return -1;
   }
-  if (a === LABEL_REG_EXP_STR) {
+  if (a2 === LABEL_REG_EXP_STR) {
     return 1;
   } else if (b === LABEL_REG_EXP_STR) {
     return -1;
   }
-  return a.length === b.length ? a < b ? -1 : 1 : b.length - a.length;
+  return a2.length === b.length ? a2 < b ? -1 : 1 : b.length - a2.length;
 }
 var Node = class {
   index;
@@ -1051,6 +3682,8 @@ var Node = class {
 };
 
 // node_modules/hono/dist/router/reg-exp-router/trie.js
+init_checked_fetch();
+init_modules_watch_stub();
 var Trie = class {
   context = { varIndex: 0 };
   root = new Node();
@@ -1182,7 +3815,7 @@ function findMiddleware(middleware, path) {
   if (!middleware) {
     return void 0;
   }
-  for (const k of Object.keys(middleware).sort((a, b) => b.length - a.length)) {
+  for (const k of Object.keys(middleware).sort((a2, b) => b.length - a2.length)) {
     if (buildWildcardRegExp(k).test(path)) {
       return [...middleware[k]];
     }
@@ -1301,7 +3934,13 @@ var RegExpRouter = class {
   }
 };
 
+// node_modules/hono/dist/router/smart-router/index.js
+init_checked_fetch();
+init_modules_watch_stub();
+
 // node_modules/hono/dist/router/smart-router/router.js
+init_checked_fetch();
+init_modules_watch_stub();
 var SmartRouter = class {
   name = "SmartRouter";
   routers = [];
@@ -1355,7 +3994,17 @@ var SmartRouter = class {
   }
 };
 
+// node_modules/hono/dist/router/trie-router/index.js
+init_checked_fetch();
+init_modules_watch_stub();
+
+// node_modules/hono/dist/router/trie-router/router.js
+init_checked_fetch();
+init_modules_watch_stub();
+
 // node_modules/hono/dist/router/trie-router/node.js
+init_checked_fetch();
+init_modules_watch_stub();
 var Node2 = class {
   methods;
   children;
@@ -1404,7 +4053,7 @@ var Node2 = class {
     const m = /* @__PURE__ */ Object.create(null);
     const handlerSet = {
       handler,
-      possibleKeys: possibleKeys.filter((v, i, a) => a.indexOf(v) === i),
+      possibleKeys: possibleKeys.filter((v, i, a2) => a2.indexOf(v) === i),
       name: this.name,
       score: this.order
     };
@@ -1496,8 +4145,8 @@ var Node2 = class {
       }
       curNodes = tempNodes;
     }
-    const results = handlerSets.sort((a, b) => {
-      return a.score - b.score;
+    const results = handlerSets.sort((a2, b) => {
+      return a2.score - b.score;
     });
     return [results.map(({ handler, params }) => [handler, params])];
   }
@@ -1535,14 +4184,52 @@ var Hono2 = class extends Hono {
   }
 };
 
+// node_modules/hono/dist/helper/adapter/index.js
+init_checked_fetch();
+init_modules_watch_stub();
+
+// todos.json
+var todos = [
+  {
+    id: 1,
+    title: "Learn React",
+    completed: false
+  },
+  {
+    id: 2,
+    title: "Learn Redux",
+    completed: false
+  },
+  {
+    id: 3,
+    title: "Learn React Router",
+    completed: false
+  },
+  {
+    id: 4,
+    title: "Learn Redux Saga",
+    completed: false
+  },
+  {
+    id: 5,
+    title: "Learn Redux Thunk",
+    completed: false
+  }
+];
+
 // index.ts
 var app = new Hono2();
-app.get("/todos", (c) => {
+app.get("/todos/:id", (c) => {
+  const todoId = c.req.param("id");
+  const todoIndex = Number(todoId);
+  const todo = todos[todoIndex] || {};
   return c.json({ todos: [] });
 });
 var Rate_Limiter_default = app;
 
 // node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts
+init_checked_fetch();
+init_modules_watch_stub();
 var drainBody = async (request, env2, _ctx, middlewareCtx) => {
   try {
     return await middlewareCtx.next(request, env2);
@@ -1561,6 +4248,8 @@ var drainBody = async (request, env2, _ctx, middlewareCtx) => {
 var middleware_ensure_req_body_drained_default = drainBody;
 
 // node_modules/wrangler/templates/middleware/middleware-miniflare3-json-error.ts
+init_checked_fetch();
+init_modules_watch_stub();
 function reduceError(e) {
   return {
     name: e?.name,
@@ -1591,6 +4280,8 @@ var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
 var middleware_insertion_facade_default = Rate_Limiter_default;
 
 // node_modules/wrangler/templates/middleware/common.ts
+init_checked_fetch();
+init_modules_watch_stub();
 var __facade_middleware__ = [];
 function __facade_register__(...args) {
   __facade_middleware__.push(...args.flat());
