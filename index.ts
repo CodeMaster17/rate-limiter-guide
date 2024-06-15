@@ -4,6 +4,13 @@ import { Context, Hono } from "hono";
 import { env } from "hono/adapter";
 import { BlankInput, Env } from "hono/types";
 import { todos } from "./todos.json";
+
+declare module "hono" {
+  interface ContextVariableMap {
+    ratelimit: Ratelimit;
+  }
+}
+
 const app = new Hono();
 
 const cache = new Map();
@@ -36,7 +43,19 @@ class RedisRateLimiter {
   }
 }
 
+// middleware to set the rateLimiter in the context
+app.use(async (c, next) => {
+  const ratelimit = RedisRateLimiter.getInstance(c);
+  if (ratelimit) {
+    c.set('ratelimit', ratelimit);
+  }
+  await next();
+});
+
 app.get("/todos/:id", (c) => {
+
+  
+
   const todoId = c.req.param("id");
   const todoIndex = Number(todoId);
   const todo = todos[todoIndex] || {};

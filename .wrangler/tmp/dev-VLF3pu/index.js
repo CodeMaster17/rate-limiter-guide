@@ -4,15 +4,16 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
-  get: (a2, b) => (typeof require !== "undefined" ? require : a2)[b]
-}) : x)(function(x) {
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __require = /* @__PURE__ */ ((x2) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x2, {
+  get: (a2, b2) => (typeof require !== "undefined" ? require : a2)[b2]
+}) : x2)(function(x2) {
   if (typeof require !== "undefined")
     return require.apply(this, arguments);
-  throw new Error('Dynamic require of "' + x + '" is not supported');
+  throw new Error('Dynamic require of "' + x2 + '" is not supported');
 });
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+var __esm = (fn2, res) => function __init() {
+  return fn2 && (res = (0, fn2[__getOwnPropNames(fn2)[0]])(fn2 = 0)), res;
 };
 var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -33,6 +34,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 
 // .wrangler/tmp/bundle-9BAu4g/checked-fetch.js
 function checkURL(request, init) {
@@ -86,24 +91,24 @@ var require_dist = __commonJS({
     "use strict";
     init_checked_fetch();
     init_modules_watch_stub();
-    var g = Object.defineProperty;
-    var k = Object.getOwnPropertyDescriptor;
-    var _ = Object.getOwnPropertyNames;
-    var w = Object.prototype.hasOwnProperty;
-    var y = (l, e) => {
-      for (var t in e)
-        g(l, t, { get: e[t], enumerable: true });
+    var g2 = Object.defineProperty;
+    var k2 = Object.getOwnPropertyDescriptor;
+    var _2 = Object.getOwnPropertyNames;
+    var w2 = Object.prototype.hasOwnProperty;
+    var y2 = (l3, e2) => {
+      for (var t in e2)
+        g2(l3, t, { get: e2[t], enumerable: true });
     };
-    var A = (l, e, t, n) => {
-      if (e && typeof e == "object" || typeof e == "function")
-        for (let s of _(e))
-          !w.call(l, s) && s !== t && g(l, s, { get: () => e[s], enumerable: !(n = k(e, s)) || n.enumerable });
-      return l;
+    var A2 = (l3, e2, t, n) => {
+      if (e2 && typeof e2 == "object" || typeof e2 == "function")
+        for (let s of _2(e2))
+          !w2.call(l3, s) && s !== t && g2(l3, s, { get: () => e2[s], enumerable: !(n = k2(e2, s)) || n.enumerable });
+      return l3;
     };
-    var S = (l) => A(g({}, "__esModule", { value: true }), l);
-    var x = {};
-    y(x, { Analytics: () => b });
-    module.exports = S(x);
+    var S2 = (l3) => A2(g2({}, "__esModule", { value: true }), l3);
+    var x2 = {};
+    y2(x2, { Analytics: () => b2 });
+    module.exports = S2(x2);
     var p = `
 local key = KEYS[1]
 local field = ARGV[1]
@@ -132,7 +137,7 @@ end
 
 return result
 `;
-    var f = `
+    var f2 = `
 local prefix = KEYS[1]
 local first_timestamp = tonumber(ARGV[1])
 local increment = tonumber(ARGV[2])
@@ -180,7 +185,7 @@ end
 
 return {true_group, false_group, denied_group}
 `;
-    var h = `
+    var h2 = `
 local prefix = KEYS[1]
 local first_timestamp = tonumber(ARGV[1])
 local increment = tonumber(ARGV[2])
@@ -199,27 +204,27 @@ local result = redis.call(unpack(zunion_params))
 
 return result
 `;
-    var b = class {
+    var b2 = class {
       redis;
       prefix;
       bucketSize;
-      constructor(e) {
-        this.redis = e.redis, this.prefix = e.prefix ?? "@upstash/analytics", this.bucketSize = this.parseWindow(e.window);
+      constructor(e2) {
+        this.redis = e2.redis, this.prefix = e2.prefix ?? "@upstash/analytics", this.bucketSize = this.parseWindow(e2.window);
       }
-      validateTableName(e) {
-        if (!/^[a-zA-Z0-9_-]+$/.test(e))
-          throw new Error(`Invalid table name: ${e}. Table names can only contain letters, numbers, dashes and underscores.`);
+      validateTableName(e2) {
+        if (!/^[a-zA-Z0-9_-]+$/.test(e2))
+          throw new Error(`Invalid table name: ${e2}. Table names can only contain letters, numbers, dashes and underscores.`);
       }
-      parseWindow(e) {
-        if (typeof e == "number") {
-          if (e <= 0)
-            throw new Error(`Invalid window: ${e}`);
-          return e;
+      parseWindow(e2) {
+        if (typeof e2 == "number") {
+          if (e2 <= 0)
+            throw new Error(`Invalid window: ${e2}`);
+          return e2;
         }
         let t = /^(\d+)([smhd])$/;
-        if (!t.test(e))
-          throw new Error(`Invalid window: ${e}`);
-        let [, n, s] = e.match(t), i = parseInt(n);
+        if (!t.test(e2))
+          throw new Error(`Invalid window: ${e2}`);
+        let [, n, s] = e2.match(t), i = parseInt(n);
         switch (s) {
           case "s":
             return i * 1e3;
@@ -233,61 +238,61 @@ return result
             throw new Error(`Invalid window unit: ${s}`);
         }
       }
-      getBucket(e) {
-        let t = e ?? Date.now();
+      getBucket(e2) {
+        let t = e2 ?? Date.now();
         return Math.floor(t / this.bucketSize) * this.bucketSize;
       }
-      async ingest(e, ...t) {
-        this.validateTableName(e), await Promise.all(t.map(async (n) => {
-          let s = this.getBucket(n.time), i = [this.prefix, e, s].join(":");
+      async ingest(e2, ...t) {
+        this.validateTableName(e2), await Promise.all(t.map(async (n) => {
+          let s = this.getBucket(n.time), i = [this.prefix, e2, s].join(":");
           await this.redis.zincrby(i, 1, JSON.stringify({ ...n, time: void 0 }));
         }));
       }
-      formatBucketAggregate(e, t, n) {
+      formatBucketAggregate(e2, t, n) {
         let s = {};
-        return e.forEach(([i, r]) => {
+        return e2.forEach(([i, r]) => {
           t == "success" && (i = i === 1 ? "true" : i === null ? "false" : i), s[t] = s[t] || {}, s[t][(i ?? "null").toString()] = r;
         }), { time: n, ...s };
       }
-      async aggregateBucket(e, t, n) {
-        this.validateTableName(e);
-        let s = this.getBucket(n), i = [this.prefix, e, s].join(":"), r = await this.redis.eval(p, [i], [t]);
+      async aggregateBucket(e2, t, n) {
+        this.validateTableName(e2);
+        let s = this.getBucket(n), i = [this.prefix, e2, s].join(":"), r = await this.redis.eval(p, [i], [t]);
         return this.formatBucketAggregate(r, t, s);
       }
-      async aggregateBuckets(e, t, n, s) {
-        this.validateTableName(e);
+      async aggregateBuckets(e2, t, n, s) {
+        this.validateTableName(e2);
         let i = this.getBucket(s), r = [];
         for (let o = 0; o < n; o += 1)
-          r.push(this.aggregateBucket(e, t, i)), i = i - this.bucketSize;
+          r.push(this.aggregateBucket(e2, t, i)), i = i - this.bucketSize;
         return Promise.all(r);
       }
-      async aggregateBucketsWithPipeline(e, t, n, s, i) {
-        this.validateTableName(e), i = i ?? 48;
-        let r = this.getBucket(s), o = [], c = this.redis.pipeline(), u = [];
+      async aggregateBucketsWithPipeline(e2, t, n, s, i) {
+        this.validateTableName(e2), i = i ?? 48;
+        let r = this.getBucket(s), o = [], c = this.redis.pipeline(), u2 = [];
         for (let a2 = 1; a2 <= n; a2 += 1) {
-          let d = [this.prefix, e, r].join(":");
-          c.eval(p, [d], [t]), o.push(r), r = r - this.bucketSize, (a2 % i == 0 || a2 == n) && (u.push(c.exec()), c = this.redis.pipeline());
+          let d = [this.prefix, e2, r].join(":");
+          c.eval(p, [d], [t]), o.push(r), r = r - this.bucketSize, (a2 % i == 0 || a2 == n) && (u2.push(c.exec()), c = this.redis.pipeline());
         }
-        return (await Promise.all(u)).flat().map((a2, d) => this.formatBucketAggregate(a2, t, o[d]));
+        return (await Promise.all(u2)).flat().map((a2, d) => this.formatBucketAggregate(a2, t, o[d]));
       }
-      async getAllowedBlocked(e, t, n) {
-        this.validateTableName(e);
-        let s = [this.prefix, e].join(":"), i = this.getBucket(n), r = await this.redis.eval(h, [s], [i, this.bucketSize, t]), o = {};
+      async getAllowedBlocked(e2, t, n) {
+        this.validateTableName(e2);
+        let s = [this.prefix, e2].join(":"), i = this.getBucket(n), r = await this.redis.eval(h2, [s], [i, this.bucketSize, t]), o = {};
         for (let c = 0; c < r.length; c += 2) {
-          let u = r[c], m = u.identifier, a2 = +r[c + 1];
-          o[m] || (o[m] = { success: 0, blocked: 0 }), o[m][u.success ? "success" : "blocked"] = a2;
+          let u2 = r[c], m = u2.identifier, a2 = +r[c + 1];
+          o[m] || (o[m] = { success: 0, blocked: 0 }), o[m][u2.success ? "success" : "blocked"] = a2;
         }
         return o;
       }
-      async getMostAllowedBlocked(e, t, n, s) {
-        this.validateTableName(e);
-        let i = [this.prefix, e].join(":"), r = this.getBucket(s), [o, c, u] = await this.redis.eval(f, [i], [r, this.bucketSize, t, n]);
-        return { allowed: this.toDicts(o), ratelimited: this.toDicts(c), denied: this.toDicts(u) };
+      async getMostAllowedBlocked(e2, t, n, s) {
+        this.validateTableName(e2);
+        let i = [this.prefix, e2].join(":"), r = this.getBucket(s), [o, c, u2] = await this.redis.eval(f2, [i], [r, this.bucketSize, t, n]);
+        return { allowed: this.toDicts(o), ratelimited: this.toDicts(c), denied: this.toDicts(u2) };
       }
-      toDicts(e) {
+      toDicts(e2) {
         let t = [];
-        for (let n = 0; n < e.length; n += 1) {
-          let s = +e[n][0], i = e[n][1];
+        for (let n = 0; n < e2.length; n += 1) {
+          let s = +e2[n][0], i = e2[n][1];
           t.push({ identifier: i.identifier, count: s });
         }
         return t;
@@ -388,8 +393,8 @@ var require_dist2 = __commonJS({
        * Stores identifier -> reset (in milliseconds)
        */
       cache;
-      constructor(cache) {
-        this.cache = cache;
+      constructor(cache2) {
+        this.cache = cache2;
       }
       isBlocked(identifier) {
         if (!this.cache.has(identifier)) {
@@ -1069,7 +1074,7 @@ var require_dist2 = __commonJS({
               const individualIDs = await Promise.all(dbs.map((s) => s.request));
               const allIDs = Array.from(
                 new Set(
-                  individualIDs.flatMap((_) => _).reduce((acc, curr, index) => {
+                  individualIDs.flatMap((_2) => _2).reduce((acc, curr, index) => {
                     if (index % 2 === 0) {
                       acc.push(curr);
                     }
@@ -1922,13 +1927,13 @@ var require_core = __commonJS({
           throw new Error("Native crypto module could not be used to get secure random number.");
         };
         var create = Object.create || function() {
-          function F() {
+          function F2() {
           }
           return function(obj) {
             var subtype;
-            F.prototype = obj;
-            subtype = new F();
-            F.prototype = null;
+            F2.prototype = obj;
+            subtype = new F2();
+            F2.prototype = null;
             return subtype;
           };
         }();
@@ -2094,8 +2099,8 @@ var require_core = __commonJS({
                 thisWords[thisSigBytes + i >>> 2] |= thatByte << 24 - (thisSigBytes + i) % 4 * 8;
               }
             } else {
-              for (var j = 0; j < thatSigBytes; j += 4) {
-                thisWords[thisSigBytes + j >>> 2] = thatWords[j >>> 2];
+              for (var j2 = 0; j2 < thatSigBytes; j2 += 4) {
+                thisWords[thisSigBytes + j2 >>> 2] = thatWords[j2 >>> 2];
               }
             }
             this.sigBytes += thatSigBytes;
@@ -2260,7 +2265,7 @@ var require_core = __commonJS({
           stringify: function(wordArray) {
             try {
               return decodeURIComponent(escape(Latin1.stringify(wordArray)));
-            } catch (e) {
+            } catch (e2) {
               throw new Error("Malformed UTF-8 data");
             }
           },
@@ -2516,7 +2521,7 @@ var require_sha1 = __commonJS({
         var WordArray = C_lib.WordArray;
         var Hasher = C_lib.Hasher;
         var C_algo = C.algo;
-        var W = [];
+        var W2 = [];
         var SHA1 = C_algo.SHA1 = Hasher.extend({
           _doReset: function() {
             this._hash = new WordArray.init([
@@ -2527,41 +2532,41 @@ var require_sha1 = __commonJS({
               3285377520
             ]);
           },
-          _doProcessBlock: function(M, offset) {
-            var H = this._hash.words;
-            var a2 = H[0];
-            var b = H[1];
-            var c = H[2];
-            var d = H[3];
-            var e = H[4];
+          _doProcessBlock: function(M2, offset) {
+            var H2 = this._hash.words;
+            var a2 = H2[0];
+            var b2 = H2[1];
+            var c = H2[2];
+            var d = H2[3];
+            var e2 = H2[4];
             for (var i = 0; i < 80; i++) {
               if (i < 16) {
-                W[i] = M[offset + i] | 0;
+                W2[i] = M2[offset + i] | 0;
               } else {
-                var n = W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16];
-                W[i] = n << 1 | n >>> 31;
+                var n = W2[i - 3] ^ W2[i - 8] ^ W2[i - 14] ^ W2[i - 16];
+                W2[i] = n << 1 | n >>> 31;
               }
-              var t = (a2 << 5 | a2 >>> 27) + e + W[i];
+              var t = (a2 << 5 | a2 >>> 27) + e2 + W2[i];
               if (i < 20) {
-                t += (b & c | ~b & d) + 1518500249;
+                t += (b2 & c | ~b2 & d) + 1518500249;
               } else if (i < 40) {
-                t += (b ^ c ^ d) + 1859775393;
+                t += (b2 ^ c ^ d) + 1859775393;
               } else if (i < 60) {
-                t += (b & c | b & d | c & d) - 1894007588;
+                t += (b2 & c | b2 & d | c & d) - 1894007588;
               } else {
-                t += (b ^ c ^ d) - 899497514;
+                t += (b2 ^ c ^ d) - 899497514;
               }
-              e = d;
+              e2 = d;
               d = c;
-              c = b << 30 | b >>> 2;
-              b = a2;
+              c = b2 << 30 | b2 >>> 2;
+              b2 = a2;
               a2 = t;
             }
-            H[0] = H[0] + a2 | 0;
-            H[1] = H[1] + b | 0;
-            H[2] = H[2] + c | 0;
-            H[3] = H[3] + d | 0;
-            H[4] = H[4] + e | 0;
+            H2[0] = H2[0] + a2 | 0;
+            H2[1] = H2[1] + b2 | 0;
+            H2[2] = H2[2] + c | 0;
+            H2[3] = H2[3] + d | 0;
+            H2[4] = H2[4] + e2 | 0;
           },
           _doFinalize: function() {
             var data = this._data;
@@ -2611,6 +2616,1571 @@ init_checked_fetch();
 init_modules_watch_stub();
 var import_enc_hex = __toESM(require_enc_hex(), 1);
 var import_sha1 = __toESM(require_sha1(), 1);
+var u = class extends Error {
+  constructor(n) {
+    super(n), this.name = "UpstashError";
+  }
+};
+var Se = class {
+  baseUrl;
+  headers;
+  options;
+  retry;
+  constructor(n) {
+    this.options = { backend: n.options?.backend, agent: n.agent, responseEncoding: n.responseEncoding ?? "base64", cache: n.cache, signal: n.signal }, this.baseUrl = n.baseUrl.replace(/\/$/, ""), this.headers = { "Content-Type": "application/json", ...n.headers }, this.options.responseEncoding === "base64" && (this.headers["Upstash-Encoding"] = "base64"), typeof n?.retry == "boolean" && n?.retry === false ? this.retry = { attempts: 1, backoff: () => 0 } : this.retry = { attempts: n?.retry?.retries ?? 5, backoff: n?.retry?.backoff ?? ((t) => Math.exp(t) * 50) };
+  }
+  mergeTelemetry(n) {
+    function t(o, m, r) {
+      return r && (o[m] ? o[m] = [o[m], r].join(",") : o[m] = r), o;
+    }
+    this.headers = t(this.headers, "Upstash-Telemetry-Runtime", n.runtime), this.headers = t(this.headers, "Upstash-Telemetry-Platform", n.platform), this.headers = t(this.headers, "Upstash-Telemetry-Sdk", n.sdk);
+  }
+  async request(n) {
+    let t = { cache: this.options.cache, method: "POST", headers: this.headers, body: JSON.stringify(n.body), keepalive: true, agent: this.options?.agent, signal: this.options.signal, backend: this.options?.backend }, o = null, m = null;
+    for (let a2 = 0; a2 <= this.retry.attempts; a2++)
+      try {
+        o = await fetch([this.baseUrl, ...n.path ?? []].join("/"), t);
+        break;
+      } catch (i) {
+        if (this.options.signal?.aborted) {
+          let p = new Blob([JSON.stringify({ result: this.options.signal.reason ?? "Aborted" })]), d = { status: 200, statusText: this.options.signal.reason ?? "Aborted" };
+          o = new Response(p, d);
+          break;
+        }
+        m = i, await new Promise((p) => setTimeout(p, this.retry.backoff(a2)));
+      }
+    if (!o)
+      throw m ?? new Error("Exhausted all retries");
+    let r = await o.json();
+    if (!o.ok)
+      throw new u(`${r.error}, command was: ${JSON.stringify(n.body)}`);
+    return this.options?.responseEncoding === "base64" ? Array.isArray(r) ? r.map(({ result: i, error: p }) => ({ result: De(i), error: p })) : { result: De(r.result), error: r.error } : r;
+  }
+};
+function Ee(s) {
+  let n = "";
+  try {
+    let t = atob(s), o = t.length, m = new Uint8Array(o);
+    for (let r = 0; r < o; r++)
+      m[r] = t.charCodeAt(r);
+    n = new TextDecoder().decode(m);
+  } catch {
+    n = s;
+  }
+  return n;
+}
+function De(s) {
+  let n;
+  switch (typeof s) {
+    case "undefined":
+      return s;
+    case "number": {
+      n = s;
+      break;
+    }
+    case "object": {
+      Array.isArray(s) ? n = s.map((t) => typeof t == "string" ? Ee(t) : Array.isArray(t) ? t.map(De) : t) : n = null;
+      break;
+    }
+    case "string": {
+      n = s === "OK" ? "OK" : Ee(s);
+      break;
+    }
+    default:
+      break;
+  }
+  return n;
+}
+function Me(s) {
+  let n = Array.isArray(s) ? s.map((t) => {
+    try {
+      return Me(t);
+    } catch {
+      return t;
+    }
+  }) : JSON.parse(s);
+  return typeof n == "number" && n.toString() !== s ? s : n;
+}
+function Ae(s) {
+  try {
+    return Me(s);
+  } catch {
+    return s;
+  }
+}
+function h(s) {
+  return [s[0], ...Ae(s.slice(1))];
+}
+var ve = (s) => {
+  switch (typeof s) {
+    case "string":
+    case "number":
+    case "boolean":
+      return s;
+    default:
+      return JSON.stringify(s);
+  }
+};
+var e = class {
+  command;
+  serialize;
+  deserialize;
+  constructor(n, t) {
+    if (this.serialize = ve, this.deserialize = typeof t?.automaticDeserialization > "u" || t.automaticDeserialization ? t?.deserialize ?? Ae : (o) => o, this.command = n.map((o) => this.serialize(o)), t?.latencyLogging) {
+      let o = this.exec.bind(this);
+      this.exec = async (m) => {
+        let r = performance.now(), a2 = await o(m), p = (performance.now() - r).toFixed(2);
+        return console.log(`Latency for \x1B[38;2;19;185;39m${this.command[0].toString().toUpperCase()}\x1B[0m: \x1B[38;2;0;255;255m${p} ms\x1B[0m`), a2;
+      };
+    }
+  }
+  async exec(n) {
+    let { result: t, error: o } = await n.request({ body: this.command });
+    if (o)
+      throw new u(o);
+    if (typeof t > "u")
+      throw new Error("Request did not return a result");
+    return this.deserialize(t);
+  }
+};
+var g = class extends e {
+  constructor(n, t) {
+    super(["append", ...n], t);
+  }
+};
+var x = class extends e {
+  constructor([n, t, o], m) {
+    let r = ["bitcount", n];
+    typeof t == "number" && r.push(t), typeof o == "number" && r.push(o), super(r, m);
+  }
+};
+var f = class extends e {
+  constructor(n, t) {
+    super(["bitop", ...n], t);
+  }
+};
+var y = class extends e {
+  constructor(n, t) {
+    super(["bitpos", ...n], t);
+  }
+};
+var b = class extends e {
+  constructor([n, t, o], m) {
+    super(["COPY", n, t, ...o?.replace ? ["REPLACE"] : []], { ...m, deserialize(r) {
+      return r > 0 ? "COPIED" : "NOT_COPIED";
+    } });
+  }
+};
+var T = class extends e {
+  constructor(n) {
+    super(["dbsize"], n);
+  }
+};
+var O = class extends e {
+  constructor(n, t) {
+    super(["decr", ...n], t);
+  }
+};
+var w = class extends e {
+  constructor(n, t) {
+    super(["decrby", ...n], t);
+  }
+};
+var D = class extends e {
+  constructor(n, t) {
+    super(["del", ...n], t);
+  }
+};
+var A = class extends e {
+  constructor(n, t) {
+    super(["echo", ...n], t);
+  }
+};
+var k = class extends e {
+  constructor([n, t, o], m) {
+    super(["eval", n, t.length, ...t, ...o ?? []], m);
+  }
+};
+var R = class extends e {
+  constructor([n, t, o], m) {
+    super(["evalsha", n, t.length, ...t, ...o ?? []], m);
+  }
+};
+var S = class extends e {
+  constructor(n, t) {
+    super(["exists", ...n], t);
+  }
+};
+var E = class extends e {
+  constructor(n, t) {
+    super(["expire", ...n.filter(Boolean)], t);
+  }
+};
+var M = class extends e {
+  constructor(n, t) {
+    super(["expireat", ...n], t);
+  }
+};
+var P = class extends e {
+  constructor(n, t) {
+    let o = ["flushall"];
+    n && n.length > 0 && n[0].async && o.push("async"), super(o, t);
+  }
+};
+var v = class extends e {
+  constructor([n], t) {
+    let o = ["flushdb"];
+    n?.async && o.push("async"), super(o, t);
+  }
+};
+var I = class extends e {
+  constructor([n, t, ...o], m) {
+    let r = ["geoadd", n];
+    "nx" in t && t.nx ? r.push("nx") : "xx" in t && t.xx && r.push("xx"), "ch" in t && t.ch && r.push("ch"), "latitude" in t && t.latitude && r.push(t.longitude, t.latitude, t.member), r.push(...o.flatMap(({ latitude: a2, longitude: i, member: p }) => [i, a2, p])), super(r, m);
+  }
+};
+var N = class extends e {
+  constructor([n, t, o, m = "M"], r) {
+    super(["GEODIST", n, t, o, m], r);
+  }
+};
+var L = class extends e {
+  constructor(n, t) {
+    let [o] = n, m = Array.isArray(n[1]) ? n[1] : n.slice(1);
+    super(["GEOHASH", o, ...m], t);
+  }
+};
+var z = class extends e {
+  constructor(n, t) {
+    let [o] = n, m = Array.isArray(n[1]) ? n[1] : n.slice(1);
+    super(["GEOPOS", o, ...m], { deserialize: (r) => Ie(r), ...t });
+  }
+};
+function Ie(s) {
+  let n = [];
+  for (let t of s)
+    !t?.[0] || !t?.[1] || n.push({ lng: parseFloat(t[0]), lat: parseFloat(t[1]) });
+  return n;
+}
+var G = class extends e {
+  constructor([n, t, o, m, r], a2) {
+    let i = ["GEOSEARCH", n];
+    (t.type === "FROMMEMBER" || t.type === "frommember") && i.push(t.type, t.member), (t.type === "FROMLONLAT" || t.type === "fromlonlat") && i.push(t.type, t.coordinate.lon, t.coordinate.lat), (o.type === "BYRADIUS" || o.type === "byradius") && i.push(o.type, o.radius, o.radiusType), (o.type === "BYBOX" || o.type === "bybox") && i.push(o.type, o.rect.width, o.rect.height, o.rectType), i.push(m), r?.count && i.push("COUNT", r.count.limit, ...r.count.any ? ["ANY"] : []);
+    let p = (d) => !r?.withCoord && !r?.withDist && !r?.withHash ? d.map((c) => {
+      try {
+        return { member: JSON.parse(c) };
+      } catch {
+        return { member: c };
+      }
+    }) : d.map((c) => {
+      let Oe = 1, C = {};
+      try {
+        C.member = JSON.parse(c[0]);
+      } catch {
+        C.member = c[0];
+      }
+      return r.withDist && (C.dist = parseFloat(c[Oe++])), r.withHash && (C.hash = c[Oe++].toString()), r.withCoord && (C.coord = { long: parseFloat(c[Oe][0]), lat: parseFloat(c[Oe][1]) }), C;
+    });
+    super([...i, ...r?.withCoord ? ["WITHCOORD"] : [], ...r?.withDist ? ["WITHDIST"] : [], ...r?.withHash ? ["WITHHASH"] : []], { deserialize: p, ...a2 });
+  }
+};
+var K = class extends e {
+  constructor([n, t, o, m, r, a2], i) {
+    let p = ["GEOSEARCHSTORE", n, t];
+    (o.type === "FROMMEMBER" || o.type === "frommember") && p.push(o.type, o.member), (o.type === "FROMLONLAT" || o.type === "fromlonlat") && p.push(o.type, o.coordinate.lon, o.coordinate.lat), (m.type === "BYRADIUS" || m.type === "byradius") && p.push(m.type, m.radius, m.radiusType), (m.type === "BYBOX" || m.type === "bybox") && p.push(m.type, m.rect.width, m.rect.height, m.rectType), p.push(r), a2?.count && p.push("COUNT", a2.count.limit, ...a2.count.any ? ["ANY"] : []), super([...p, ...a2?.storeDist ? ["STOREDIST"] : []], i);
+  }
+};
+var X = class extends e {
+  constructor(n, t) {
+    super(["get", ...n], t);
+  }
+};
+var J = class extends e {
+  constructor(n, t) {
+    super(["getbit", ...n], t);
+  }
+};
+var U = class extends e {
+  constructor(n, t) {
+    super(["getdel", ...n], t);
+  }
+};
+var Z = class extends e {
+  constructor(n, t) {
+    super(["getrange", ...n], t);
+  }
+};
+var B = class extends e {
+  constructor(n, t) {
+    super(["getset", ...n], t);
+  }
+};
+var H = class extends e {
+  constructor(n, t) {
+    super(["hdel", ...n], t);
+  }
+};
+var F = class extends e {
+  constructor(n, t) {
+    super(["hexists", ...n], t);
+  }
+};
+var $ = class extends e {
+  constructor(n, t) {
+    super(["hget", ...n], t);
+  }
+};
+function Ne(s) {
+  if (s.length === 0)
+    return null;
+  let n = {};
+  for (; s.length >= 2; ) {
+    let t = s.shift(), o = s.shift();
+    try {
+      !Number.isNaN(Number(o)) && !Number.isSafeInteger(Number(o)) ? n[t] = o : n[t] = JSON.parse(o);
+    } catch {
+      n[t] = o;
+    }
+  }
+  return n;
+}
+var q = class extends e {
+  constructor(n, t) {
+    super(["hgetall", ...n], { deserialize: (o) => Ne(o), ...t });
+  }
+};
+var j = class extends e {
+  constructor(n, t) {
+    super(["hincrby", ...n], t);
+  }
+};
+var Y = class extends e {
+  constructor(n, t) {
+    super(["hincrbyfloat", ...n], t);
+  }
+};
+var V = class extends e {
+  constructor([n], t) {
+    super(["hkeys", n], t);
+  }
+};
+var _ = class extends e {
+  constructor(n, t) {
+    super(["hlen", ...n], t);
+  }
+};
+function Le(s, n) {
+  if (n.length === 0 || n.every((o) => o === null))
+    return null;
+  let t = {};
+  for (let o = 0; o < s.length; o++)
+    try {
+      t[s[o]] = JSON.parse(n[o]);
+    } catch {
+      t[s[o]] = n[o];
+    }
+  return t;
+}
+var W = class extends e {
+  constructor([n, ...t], o) {
+    super(["hmget", n, ...t], { deserialize: (m) => Le(t, m), ...o });
+  }
+};
+var Q = class extends e {
+  constructor([n, t], o) {
+    super(["hmset", n, ...Object.entries(t).flatMap(([m, r]) => [m, r])], o);
+  }
+};
+function ze(s) {
+  if (s.length === 0)
+    return null;
+  let n = {};
+  for (; s.length >= 2; ) {
+    let t = s.shift(), o = s.shift();
+    try {
+      n[t] = JSON.parse(o);
+    } catch {
+      n[t] = o;
+    }
+  }
+  return n;
+}
+var nn = class extends e {
+  constructor(n, t) {
+    let o = ["hrandfield", n[0]];
+    typeof n[1] == "number" && o.push(n[1]), n[2] && o.push("WITHVALUES"), super(o, { deserialize: n[2] ? (m) => ze(m) : t?.deserialize, ...t });
+  }
+};
+var tn = class extends e {
+  constructor([n, t, o], m) {
+    let r = ["hscan", n, t];
+    o?.match && r.push("match", o.match), typeof o?.count == "number" && r.push("count", o.count), super(r, { deserialize: h, ...m });
+  }
+};
+var en = class extends e {
+  constructor([n, t], o) {
+    super(["hset", n, ...Object.entries(t).flatMap(([m, r]) => [m, r])], o);
+  }
+};
+var on = class extends e {
+  constructor(n, t) {
+    super(["hsetnx", ...n], t);
+  }
+};
+var sn = class extends e {
+  constructor(n, t) {
+    super(["hstrlen", ...n], t);
+  }
+};
+var mn = class extends e {
+  constructor(n, t) {
+    super(["hvals", ...n], t);
+  }
+};
+var rn = class extends e {
+  constructor(n, t) {
+    super(["incr", ...n], t);
+  }
+};
+var an = class extends e {
+  constructor(n, t) {
+    super(["incrby", ...n], t);
+  }
+};
+var pn = class extends e {
+  constructor(n, t) {
+    super(["incrbyfloat", ...n], t);
+  }
+};
+var dn = class extends e {
+  constructor(n, t) {
+    super(["JSON.ARRAPPEND", ...n], t);
+  }
+};
+var cn = class extends e {
+  constructor(n, t) {
+    super(["JSON.ARRINDEX", ...n], t);
+  }
+};
+var un = class extends e {
+  constructor(n, t) {
+    super(["JSON.ARRINSERT", ...n], t);
+  }
+};
+var hn = class extends e {
+  constructor(n, t) {
+    super(["JSON.ARRLEN", n[0], n[1] ?? "$"], t);
+  }
+};
+var ln = class extends e {
+  constructor(n, t) {
+    super(["JSON.ARRPOP", ...n], t);
+  }
+};
+var Cn = class extends e {
+  constructor(n, t) {
+    let o = n[1] ?? "$", m = n[2] ?? 0, r = n[3] ?? 0;
+    super(["JSON.ARRTRIM", n[0], o, m, r], t);
+  }
+};
+var gn = class extends e {
+  constructor(n, t) {
+    super(["JSON.CLEAR", ...n], t);
+  }
+};
+var xn = class extends e {
+  constructor(n, t) {
+    super(["JSON.DEL", ...n], t);
+  }
+};
+var fn = class extends e {
+  constructor(n, t) {
+    super(["JSON.FORGET", ...n], t);
+  }
+};
+var yn = class extends e {
+  constructor(n, t) {
+    let o = ["JSON.GET"];
+    typeof n[1] == "string" ? o.push(...n) : (o.push(n[0]), n[1] && (n[1].indent && o.push("INDENT", n[1].indent), n[1].newline && o.push("NEWLINE", n[1].newline), n[1].space && o.push("SPACE", n[1].space)), o.push(...n.slice(2))), super(o, t);
+  }
+};
+var bn = class extends e {
+  constructor(n, t) {
+    super(["JSON.MGET", ...n[0], n[1]], t);
+  }
+};
+var Tn = class extends e {
+  constructor(n, t) {
+    super(["JSON.NUMINCRBY", ...n], t);
+  }
+};
+var On = class extends e {
+  constructor(n, t) {
+    super(["JSON.NUMMULTBY", ...n], t);
+  }
+};
+var wn = class extends e {
+  constructor(n, t) {
+    super(["JSON.OBJKEYS", ...n], t);
+  }
+};
+var Dn = class extends e {
+  constructor(n, t) {
+    super(["JSON.OBJLEN", ...n], t);
+  }
+};
+var An = class extends e {
+  constructor(n, t) {
+    super(["JSON.RESP", ...n], t);
+  }
+};
+var kn = class extends e {
+  constructor(n, t) {
+    let o = ["JSON.SET", n[0], n[1], n[2]];
+    n[3] && (n[3].nx ? o.push("NX") : n[3].xx && o.push("XX")), super(o, t);
+  }
+};
+var Rn = class extends e {
+  constructor(n, t) {
+    super(["JSON.STRAPPEND", ...n], t);
+  }
+};
+var Sn = class extends e {
+  constructor(n, t) {
+    super(["JSON.STRLEN", ...n], t);
+  }
+};
+var En = class extends e {
+  constructor(n, t) {
+    super(["JSON.TOGGLE", ...n], t);
+  }
+};
+var Mn = class extends e {
+  constructor(n, t) {
+    super(["JSON.TYPE", ...n], t);
+  }
+};
+var Pn = class extends e {
+  constructor(n, t) {
+    super(["keys", ...n], t);
+  }
+};
+var vn = class extends e {
+  constructor(n, t) {
+    super(["lindex", ...n], t);
+  }
+};
+var In = class extends e {
+  constructor(n, t) {
+    super(["linsert", ...n], t);
+  }
+};
+var Nn = class extends e {
+  constructor(n, t) {
+    super(["llen", ...n], t);
+  }
+};
+var Ln = class extends e {
+  constructor(n, t) {
+    super(["lmove", ...n], t);
+  }
+};
+var zn = class extends e {
+  constructor(n, t) {
+    super(["lpop", ...n], t);
+  }
+};
+var Gn = class extends e {
+  constructor(n, t) {
+    let [o, m, r, a2] = n;
+    super(["LMPOP", o, ...m, r, ...a2 ? ["COUNT", a2] : []], t);
+  }
+};
+var Kn = class extends e {
+  constructor(n, t) {
+    let o = ["lpos", n[0], n[1]];
+    typeof n[2]?.rank == "number" && o.push("rank", n[2].rank), typeof n[2]?.count == "number" && o.push("count", n[2].count), typeof n[2]?.maxLen == "number" && o.push("maxLen", n[2].maxLen), super(o, t);
+  }
+};
+var Xn = class extends e {
+  constructor(n, t) {
+    super(["lpush", ...n], t);
+  }
+};
+var Jn = class extends e {
+  constructor(n, t) {
+    super(["lpushx", ...n], t);
+  }
+};
+var Un = class extends e {
+  constructor(n, t) {
+    super(["lrange", ...n], t);
+  }
+};
+var Zn = class extends e {
+  constructor(n, t) {
+    super(["lrem", ...n], t);
+  }
+};
+var Bn = class extends e {
+  constructor(n, t) {
+    super(["lset", ...n], t);
+  }
+};
+var Hn = class extends e {
+  constructor(n, t) {
+    super(["ltrim", ...n], t);
+  }
+};
+var Fn = class extends e {
+  constructor(n, t) {
+    let o = Array.isArray(n[0]) ? n[0] : n;
+    super(["mget", ...o], t);
+  }
+};
+var $n = class extends e {
+  constructor([n], t) {
+    super(["mset", ...Object.entries(n).flatMap(([o, m]) => [o, m])], t);
+  }
+};
+var qn = class extends e {
+  constructor([n], t) {
+    super(["msetnx", ...Object.entries(n).flatMap((o) => o)], t);
+  }
+};
+var jn = class extends e {
+  constructor(n, t) {
+    super(["persist", ...n], t);
+  }
+};
+var Yn = class extends e {
+  constructor(n, t) {
+    super(["pexpire", ...n], t);
+  }
+};
+var Vn = class extends e {
+  constructor(n, t) {
+    super(["pexpireat", ...n], t);
+  }
+};
+var _n = class extends e {
+  constructor(n, t) {
+    super(["pfadd", ...n], t);
+  }
+};
+var Wn = class extends e {
+  constructor(n, t) {
+    super(["pfcount", ...n], t);
+  }
+};
+var Qn = class extends e {
+  constructor(n, t) {
+    super(["pfmerge", ...n], t);
+  }
+};
+var nt = class extends e {
+  constructor(n, t) {
+    let o = ["ping"];
+    typeof n < "u" && typeof n[0] < "u" && o.push(n[0]), super(o, t);
+  }
+};
+var tt = class extends e {
+  constructor(n, t) {
+    super(["psetex", ...n], t);
+  }
+};
+var et = class extends e {
+  constructor(n, t) {
+    super(["pttl", ...n], t);
+  }
+};
+var ot = class extends e {
+  constructor(n, t) {
+    super(["publish", ...n], t);
+  }
+};
+var st = class extends e {
+  constructor(n) {
+    super(["randomkey"], n);
+  }
+};
+var mt = class extends e {
+  constructor(n, t) {
+    super(["rename", ...n], t);
+  }
+};
+var rt = class extends e {
+  constructor(n, t) {
+    super(["renamenx", ...n], t);
+  }
+};
+var at = class extends e {
+  constructor(n, t) {
+    super(["rpop", ...n], t);
+  }
+};
+var it = class extends e {
+  constructor(n, t) {
+    super(["rpush", ...n], t);
+  }
+};
+var pt = class extends e {
+  constructor(n, t) {
+    super(["rpushx", ...n], t);
+  }
+};
+var dt = class extends e {
+  constructor(n, t) {
+    super(["sadd", ...n], t);
+  }
+};
+var ct = class extends e {
+  constructor([n, t], o) {
+    let m = ["scan", n];
+    t?.match && m.push("match", t.match), typeof t?.count == "number" && m.push("count", t.count), t?.type && t.type.length > 0 && m.push("type", t.type), super(m, { deserialize: h, ...o });
+  }
+};
+var ut = class extends e {
+  constructor(n, t) {
+    super(["scard", ...n], t);
+  }
+};
+var ht = class extends e {
+  constructor(n, t) {
+    super(["script", "exists", ...n], { deserialize: (o) => o, ...t });
+  }
+};
+var lt = class extends e {
+  constructor([n], t) {
+    let o = ["script", "flush"];
+    n?.sync ? o.push("sync") : n?.async && o.push("async"), super(o, t);
+  }
+};
+var Ct = class extends e {
+  constructor(n, t) {
+    super(["script", "load", ...n], t);
+  }
+};
+var gt = class extends e {
+  constructor(n, t) {
+    super(["sdiff", ...n], t);
+  }
+};
+var xt = class extends e {
+  constructor(n, t) {
+    super(["sdiffstore", ...n], t);
+  }
+};
+var ft = class extends e {
+  constructor([n, t, o], m) {
+    let r = ["set", n, t];
+    o && ("nx" in o && o.nx ? r.push("nx") : "xx" in o && o.xx && r.push("xx"), "get" in o && o.get && r.push("get"), "ex" in o && typeof o.ex == "number" ? r.push("ex", o.ex) : "px" in o && typeof o.px == "number" ? r.push("px", o.px) : "exat" in o && typeof o.exat == "number" ? r.push("exat", o.exat) : "pxat" in o && typeof o.pxat == "number" ? r.push("pxat", o.pxat) : "keepTtl" in o && o.keepTtl && r.push("keepTtl")), super(r, m);
+  }
+};
+var yt = class extends e {
+  constructor(n, t) {
+    super(["setbit", ...n], t);
+  }
+};
+var bt = class extends e {
+  constructor(n, t) {
+    super(["setex", ...n], t);
+  }
+};
+var Tt = class extends e {
+  constructor(n, t) {
+    super(["setnx", ...n], t);
+  }
+};
+var Ot = class extends e {
+  constructor(n, t) {
+    super(["setrange", ...n], t);
+  }
+};
+var wt = class extends e {
+  constructor(n, t) {
+    super(["sinter", ...n], t);
+  }
+};
+var Dt = class extends e {
+  constructor(n, t) {
+    super(["sinterstore", ...n], t);
+  }
+};
+var At = class extends e {
+  constructor(n, t) {
+    super(["sismember", ...n], t);
+  }
+};
+var kt = class extends e {
+  constructor(n, t) {
+    super(["smembers", ...n], t);
+  }
+};
+var Rt = class extends e {
+  constructor(n, t) {
+    super(["smismember", n[0], ...n[1]], t);
+  }
+};
+var St = class extends e {
+  constructor(n, t) {
+    super(["smove", ...n], t);
+  }
+};
+var Et = class extends e {
+  constructor([n, t], o) {
+    let m = ["spop", n];
+    typeof t == "number" && m.push(t), super(m, o);
+  }
+};
+var Mt = class extends e {
+  constructor([n, t], o) {
+    let m = ["srandmember", n];
+    typeof t == "number" && m.push(t), super(m, o);
+  }
+};
+var Pt = class extends e {
+  constructor(n, t) {
+    super(["srem", ...n], t);
+  }
+};
+var vt = class extends e {
+  constructor([n, t, o], m) {
+    let r = ["sscan", n, t];
+    o?.match && r.push("match", o.match), typeof o?.count == "number" && r.push("count", o.count), super(r, { deserialize: h, ...m });
+  }
+};
+var It = class extends e {
+  constructor(n, t) {
+    super(["strlen", ...n], t);
+  }
+};
+var Nt = class extends e {
+  constructor(n, t) {
+    super(["sunion", ...n], t);
+  }
+};
+var Lt = class extends e {
+  constructor(n, t) {
+    super(["sunionstore", ...n], t);
+  }
+};
+var zt = class extends e {
+  constructor(n) {
+    super(["time"], n);
+  }
+};
+var Gt = class extends e {
+  constructor(n, t) {
+    super(["touch", ...n], t);
+  }
+};
+var Kt = class extends e {
+  constructor(n, t) {
+    super(["ttl", ...n], t);
+  }
+};
+var Xt = class extends e {
+  constructor(n, t) {
+    super(["type", ...n], t);
+  }
+};
+var Jt = class extends e {
+  constructor(n, t) {
+    super(["unlink", ...n], t);
+  }
+};
+var Ut = class extends e {
+  constructor([n, t, o], m) {
+    let r = Array.isArray(o) ? [...o] : [o];
+    super(["XACK", n, t, ...r], m);
+  }
+};
+var Zt = class extends e {
+  constructor([n, t, o, m], r) {
+    let a2 = ["XADD", n];
+    m && (m.nomkStream && a2.push("NOMKSTREAM"), m.trim && (a2.push(m.trim.type, m.trim.comparison, m.trim.threshold), typeof m.trim.limit < "u" && a2.push("LIMIT", m.trim.limit))), a2.push(t);
+    for (let [i, p] of Object.entries(o))
+      a2.push(i, p);
+    super(a2, r);
+  }
+};
+var Bt = class extends e {
+  constructor([n, t, o, m, r, a2], i) {
+    let p = [];
+    a2?.count && p.push("COUNT", a2.count), a2?.justId && p.push("JUSTID"), super(["XAUTOCLAIM", n, t, o, m, r, ...p], i);
+  }
+};
+var Ht = class extends e {
+  constructor([n, t, o, m, r, a2], i) {
+    let p = Array.isArray(r) ? [...r] : [r], d = [];
+    a2?.idleMS && d.push("IDLE", a2.idleMS), a2?.idleMS && d.push("TIME", a2.timeMS), a2?.retryCount && d.push("RETRYCOUNT", a2?.retryCount), a2?.force && d.push("FORCE"), a2?.justId && d.push("JUSTID"), a2?.lastId && d.push("LASTID", a2.lastId), super(["XCLAIM", n, t, o, m, ...p, ...d], i);
+  }
+};
+var Ft = class extends e {
+  constructor([n, t], o) {
+    let m = Array.isArray(t) ? [...t] : [t];
+    super(["XDEL", n, ...m], o);
+  }
+};
+var $t = class extends e {
+  constructor([n, t], o) {
+    let m = ["XGROUP"];
+    switch (t.type) {
+      case "CREATE":
+        m.push("CREATE", n, t.group, t.id), t.options && (t.options.MKSTREAM && m.push("MKSTREAM"), t.options.ENTRIESREAD !== void 0 && m.push("ENTRIESREAD", t.options.ENTRIESREAD.toString()));
+        break;
+      case "CREATECONSUMER":
+        m.push("CREATECONSUMER", n, t.group, t.consumer);
+        break;
+      case "DELCONSUMER":
+        m.push("DELCONSUMER", n, t.group, t.consumer);
+        break;
+      case "DESTROY":
+        m.push("DESTROY", n, t.group);
+        break;
+      case "SETID":
+        m.push("SETID", n, t.group, t.id), t.options && t.options.ENTRIESREAD !== void 0 && m.push("ENTRIESREAD", t.options.ENTRIESREAD.toString());
+        break;
+      default:
+        throw new Error("Invalid XGROUP");
+    }
+    super(m, o);
+  }
+};
+var qt = class extends e {
+  constructor([n, t], o) {
+    let m = [];
+    t.type === "CONSUMERS" ? m.push("CONSUMERS", n, t.group) : m.push("GROUPS", n), super(["XINFO", ...m], o);
+  }
+};
+var jt = class extends e {
+  constructor(n, t) {
+    super(["XLEN", ...n], t);
+  }
+};
+var Yt = class extends e {
+  constructor([n, t, o, m, r, a2], i) {
+    let p = typeof a2?.consumer < "u" ? Array.isArray(a2.consumer) ? [...a2.consumer] : [a2.consumer] : [];
+    super(["XPENDING", n, t, ...a2?.idleTime ? ["IDLE", a2.idleTime] : [], o, m, r, ...p], i);
+  }
+};
+function Ge(s) {
+  let n = {};
+  for (let t of s)
+    for (; t.length >= 2; ) {
+      let o = t.shift(), m = t.shift();
+      for ((o in n) || (n[o] = {}); m.length >= 2; ) {
+        let r = m.shift(), a2 = m.shift();
+        try {
+          n[o][r] = JSON.parse(a2);
+        } catch {
+          n[o][r] = a2;
+        }
+      }
+    }
+  return n;
+}
+var Vt = class extends e {
+  constructor([n, t, o, m], r) {
+    let a2 = ["XRANGE", n, t, o];
+    typeof m == "number" && a2.push("COUNT", m), super(a2, { deserialize: (i) => Ge(i), ...r });
+  }
+};
+var Ke = "ERR Unbalanced XREAD list of streams: for each stream key an ID or '$' must be specified";
+var _t = class extends e {
+  constructor([n, t, o], m) {
+    if (Array.isArray(n) && Array.isArray(t) && n.length !== t.length)
+      throw new Error(Ke);
+    let r = [];
+    typeof o?.count == "number" && r.push("COUNT", o.count), typeof o?.blockMS == "number" && r.push("BLOCK", o.blockMS), r.push("STREAMS", ...Array.isArray(n) ? [...n] : [n], ...Array.isArray(t) ? [...t] : [t]), super(["XREAD", ...r], m);
+  }
+};
+var Xe = "ERR Unbalanced XREADGROUP list of streams: for each stream key an ID or '$' must be specified";
+var Wt = class extends e {
+  constructor([n, t, o, m, r], a2) {
+    if (Array.isArray(o) && Array.isArray(m) && o.length !== m.length)
+      throw new Error(Xe);
+    let i = [];
+    typeof r?.count == "number" && i.push("COUNT", r.count), typeof r?.blockMS == "number" && i.push("BLOCK", r.blockMS), typeof r?.NOACK == "boolean" && r?.NOACK && i.push("NOACK"), i.push("STREAMS", ...Array.isArray(o) ? [...o] : [o], ...Array.isArray(m) ? [...m] : [m]), super(["XREADGROUP", "GROUP", n, t, ...i], a2);
+  }
+};
+var Qt = class extends e {
+  constructor([n, t, o, m], r) {
+    let a2 = ["XREVRANGE", n, t, o];
+    typeof m == "number" && a2.push("COUNT", m), super(a2, { deserialize: (i) => Je(i), ...r });
+  }
+};
+function Je(s) {
+  let n = {};
+  for (let t of s)
+    for (; t.length >= 2; ) {
+      let o = t.shift(), m = t.shift();
+      for ((o in n) || (n[o] = {}); m.length >= 2; ) {
+        let r = m.shift(), a2 = m.shift();
+        try {
+          n[o][r] = JSON.parse(a2);
+        } catch {
+          n[o][r] = a2;
+        }
+      }
+    }
+  return n;
+}
+var ne = class extends e {
+  constructor([n, t], o) {
+    let { limit: m, strategy: r, threshold: a2, exactness: i = "~" } = t;
+    super(["XTRIM", n, r, i, a2, ...m ? ["LIMIT", m] : []], o);
+  }
+};
+var l = class extends e {
+  constructor([n, t, ...o], m) {
+    let r = ["zadd", n];
+    "nx" in t && t.nx ? r.push("nx") : "xx" in t && t.xx && r.push("xx"), "ch" in t && t.ch && r.push("ch"), "incr" in t && t.incr && r.push("incr"), "lt" in t && t.lt ? r.push("lt") : "gt" in t && t.gt && r.push("gt"), "score" in t && "member" in t && r.push(t.score, t.member), r.push(...o.flatMap(({ score: a2, member: i }) => [a2, i])), super(r, m);
+  }
+};
+var te = class extends e {
+  constructor(n, t) {
+    super(["zcard", ...n], t);
+  }
+};
+var ee = class extends e {
+  constructor(n, t) {
+    super(["zcount", ...n], t);
+  }
+};
+var oe = class extends e {
+  constructor(n, t) {
+    super(["zincrby", ...n], t);
+  }
+};
+var se = class extends e {
+  constructor([n, t, o, m], r) {
+    let a2 = ["zinterstore", n, t];
+    Array.isArray(o) ? a2.push(...o) : a2.push(o), m && ("weights" in m && m.weights ? a2.push("weights", ...m.weights) : "weight" in m && typeof m.weight == "number" && a2.push("weights", m.weight), "aggregate" in m && a2.push("aggregate", m.aggregate)), super(a2, r);
+  }
+};
+var me = class extends e {
+  constructor(n, t) {
+    super(["zlexcount", ...n], t);
+  }
+};
+var re = class extends e {
+  constructor([n, t], o) {
+    let m = ["zpopmax", n];
+    typeof t == "number" && m.push(t), super(m, o);
+  }
+};
+var ae = class extends e {
+  constructor([n, t], o) {
+    let m = ["zpopmin", n];
+    typeof t == "number" && m.push(t), super(m, o);
+  }
+};
+var ie = class extends e {
+  constructor([n, t, o, m], r) {
+    let a2 = ["zrange", n, t, o];
+    m?.byScore && a2.push("byscore"), m?.byLex && a2.push("bylex"), m?.rev && a2.push("rev"), typeof m?.count < "u" && typeof m?.offset < "u" && a2.push("limit", m.offset, m.count), m?.withScores && a2.push("withscores"), super(a2, r);
+  }
+};
+var pe = class extends e {
+  constructor(n, t) {
+    super(["zrank", ...n], t);
+  }
+};
+var de = class extends e {
+  constructor(n, t) {
+    super(["zrem", ...n], t);
+  }
+};
+var ce = class extends e {
+  constructor(n, t) {
+    super(["zremrangebylex", ...n], t);
+  }
+};
+var ue = class extends e {
+  constructor(n, t) {
+    super(["zremrangebyrank", ...n], t);
+  }
+};
+var he = class extends e {
+  constructor(n, t) {
+    super(["zremrangebyscore", ...n], t);
+  }
+};
+var le = class extends e {
+  constructor(n, t) {
+    super(["zrevrank", ...n], t);
+  }
+};
+var Ce = class extends e {
+  constructor([n, t, o], m) {
+    let r = ["zscan", n, t];
+    o?.match && r.push("match", o.match), typeof o?.count == "number" && r.push("count", o.count), super(r, { deserialize: h, ...m });
+  }
+};
+var ge = class extends e {
+  constructor(n, t) {
+    super(["zscore", ...n], t);
+  }
+};
+var xe = class extends e {
+  constructor([n, t, o], m) {
+    let r = ["zunion", n];
+    Array.isArray(t) ? r.push(...t) : r.push(t), o && ("weights" in o && o.weights ? r.push("weights", ...o.weights) : "weight" in o && typeof o.weight == "number" && r.push("weights", o.weight), "aggregate" in o && r.push("aggregate", o.aggregate), o?.withScores && r.push("withscores")), super(r, m);
+  }
+};
+var fe = class extends e {
+  constructor([n, t, o, m], r) {
+    let a2 = ["zunionstore", n, t];
+    Array.isArray(o) ? a2.push(...o) : a2.push(o), m && ("weights" in m && m.weights ? a2.push("weights", ...m.weights) : "weight" in m && typeof m.weight == "number" && a2.push("weights", m.weight), "aggregate" in m && a2.push("aggregate", m.aggregate)), super(a2, r);
+  }
+};
+var ye = class extends e {
+  constructor(n, t) {
+    super(["zdiffstore", ...n], t);
+  }
+};
+var be = class extends e {
+  constructor(n, t) {
+    let [o, m] = n;
+    super(["zmscore", o, ...m], t);
+  }
+};
+var Te = class {
+  client;
+  commands;
+  commandOptions;
+  multiExec;
+  constructor(n) {
+    if (this.client = n.client, this.commands = [], this.commandOptions = n.commandOptions, this.multiExec = n.multiExec ?? false, this.commandOptions?.latencyLogging) {
+      let t = this.exec.bind(this);
+      this.exec = async () => {
+        let o = performance.now(), m = await t(), a2 = (performance.now() - o).toFixed(2);
+        return console.log(`Latency for \x1B[38;2;19;185;39m${this.multiExec ? ["MULTI-EXEC"] : ["PIPELINE"].toString().toUpperCase()}\x1B[0m: \x1B[38;2;0;255;255m${a2} ms\x1B[0m`), m;
+      };
+    }
+  }
+  exec = async () => {
+    if (this.commands.length === 0)
+      throw new Error("Pipeline is empty");
+    let n = this.multiExec ? ["multi-exec"] : ["pipeline"];
+    return (await this.client.request({ path: n, body: Object.values(this.commands).map((o) => o.command) })).map(({ error: o, result: m }, r) => {
+      if (o)
+        throw new u(`Command ${r + 1} [ ${this.commands[r].command[0]} ] failed: ${o}`);
+      return this.commands[r].deserialize(m);
+    });
+  };
+  length() {
+    return this.commands.length;
+  }
+  chain(n) {
+    return this.commands.push(n), this;
+  }
+  append = (...n) => this.chain(new g(n, this.commandOptions));
+  bitcount = (...n) => this.chain(new x(n, this.commandOptions));
+  bitop = (n, t, o, ...m) => this.chain(new f([n, t, o, ...m], this.commandOptions));
+  bitpos = (...n) => this.chain(new y(n, this.commandOptions));
+  copy = (...n) => this.chain(new b(n, this.commandOptions));
+  zdiffstore = (...n) => this.chain(new ye(n, this.commandOptions));
+  dbsize = () => this.chain(new T(this.commandOptions));
+  decr = (...n) => this.chain(new O(n, this.commandOptions));
+  decrby = (...n) => this.chain(new w(n, this.commandOptions));
+  del = (...n) => this.chain(new D(n, this.commandOptions));
+  echo = (...n) => this.chain(new A(n, this.commandOptions));
+  eval = (...n) => this.chain(new k(n, this.commandOptions));
+  evalsha = (...n) => this.chain(new R(n, this.commandOptions));
+  exists = (...n) => this.chain(new S(n, this.commandOptions));
+  expire = (...n) => this.chain(new E(n, this.commandOptions));
+  expireat = (...n) => this.chain(new M(n, this.commandOptions));
+  flushall = (n) => this.chain(new P(n, this.commandOptions));
+  flushdb = (...n) => this.chain(new v(n, this.commandOptions));
+  geoadd = (...n) => this.chain(new I(n, this.commandOptions));
+  geodist = (...n) => this.chain(new N(n, this.commandOptions));
+  geopos = (...n) => this.chain(new z(n, this.commandOptions));
+  geohash = (...n) => this.chain(new L(n, this.commandOptions));
+  geosearch = (...n) => this.chain(new G(n, this.commandOptions));
+  geosearchstore = (...n) => this.chain(new K(n, this.commandOptions));
+  get = (...n) => this.chain(new X(n, this.commandOptions));
+  getbit = (...n) => this.chain(new J(n, this.commandOptions));
+  getdel = (...n) => this.chain(new U(n, this.commandOptions));
+  getrange = (...n) => this.chain(new Z(n, this.commandOptions));
+  getset = (n, t) => this.chain(new B([n, t], this.commandOptions));
+  hdel = (...n) => this.chain(new H(n, this.commandOptions));
+  hexists = (...n) => this.chain(new F(n, this.commandOptions));
+  hget = (...n) => this.chain(new $(n, this.commandOptions));
+  hgetall = (...n) => this.chain(new q(n, this.commandOptions));
+  hincrby = (...n) => this.chain(new j(n, this.commandOptions));
+  hincrbyfloat = (...n) => this.chain(new Y(n, this.commandOptions));
+  hkeys = (...n) => this.chain(new V(n, this.commandOptions));
+  hlen = (...n) => this.chain(new _(n, this.commandOptions));
+  hmget = (...n) => this.chain(new W(n, this.commandOptions));
+  hmset = (n, t) => this.chain(new Q([n, t], this.commandOptions));
+  hrandfield = (n, t, o) => this.chain(new nn([n, t, o], this.commandOptions));
+  hscan = (...n) => this.chain(new tn(n, this.commandOptions));
+  hset = (n, t) => this.chain(new en([n, t], this.commandOptions));
+  hsetnx = (n, t, o) => this.chain(new on([n, t, o], this.commandOptions));
+  hstrlen = (...n) => this.chain(new sn(n, this.commandOptions));
+  hvals = (...n) => this.chain(new mn(n, this.commandOptions));
+  incr = (...n) => this.chain(new rn(n, this.commandOptions));
+  incrby = (...n) => this.chain(new an(n, this.commandOptions));
+  incrbyfloat = (...n) => this.chain(new pn(n, this.commandOptions));
+  keys = (...n) => this.chain(new Pn(n, this.commandOptions));
+  lindex = (...n) => this.chain(new vn(n, this.commandOptions));
+  linsert = (n, t, o, m) => this.chain(new In([n, t, o, m], this.commandOptions));
+  llen = (...n) => this.chain(new Nn(n, this.commandOptions));
+  lmove = (...n) => this.chain(new Ln(n, this.commandOptions));
+  lpop = (...n) => this.chain(new zn(n, this.commandOptions));
+  lmpop = (...n) => this.chain(new Gn(n, this.commandOptions));
+  lpos = (...n) => this.chain(new Kn(n, this.commandOptions));
+  lpush = (n, ...t) => this.chain(new Xn([n, ...t], this.commandOptions));
+  lpushx = (n, ...t) => this.chain(new Jn([n, ...t], this.commandOptions));
+  lrange = (...n) => this.chain(new Un(n, this.commandOptions));
+  lrem = (n, t, o) => this.chain(new Zn([n, t, o], this.commandOptions));
+  lset = (n, t, o) => this.chain(new Bn([n, t, o], this.commandOptions));
+  ltrim = (...n) => this.chain(new Hn(n, this.commandOptions));
+  mget = (...n) => this.chain(new Fn(n, this.commandOptions));
+  mset = (n) => this.chain(new $n([n], this.commandOptions));
+  msetnx = (n) => this.chain(new qn([n], this.commandOptions));
+  persist = (...n) => this.chain(new jn(n, this.commandOptions));
+  pexpire = (...n) => this.chain(new Yn(n, this.commandOptions));
+  pexpireat = (...n) => this.chain(new Vn(n, this.commandOptions));
+  pfadd = (...n) => this.chain(new _n(n, this.commandOptions));
+  pfcount = (...n) => this.chain(new Wn(n, this.commandOptions));
+  pfmerge = (...n) => this.chain(new Qn(n, this.commandOptions));
+  ping = (n) => this.chain(new nt(n, this.commandOptions));
+  psetex = (n, t, o) => this.chain(new tt([n, t, o], this.commandOptions));
+  pttl = (...n) => this.chain(new et(n, this.commandOptions));
+  publish = (...n) => this.chain(new ot(n, this.commandOptions));
+  randomkey = () => this.chain(new st(this.commandOptions));
+  rename = (...n) => this.chain(new mt(n, this.commandOptions));
+  renamenx = (...n) => this.chain(new rt(n, this.commandOptions));
+  rpop = (...n) => this.chain(new at(n, this.commandOptions));
+  rpush = (n, ...t) => this.chain(new it([n, ...t], this.commandOptions));
+  rpushx = (n, ...t) => this.chain(new pt([n, ...t], this.commandOptions));
+  sadd = (n, ...t) => this.chain(new dt([n, ...t], this.commandOptions));
+  scan = (...n) => this.chain(new ct(n, this.commandOptions));
+  scard = (...n) => this.chain(new ut(n, this.commandOptions));
+  scriptExists = (...n) => this.chain(new ht(n, this.commandOptions));
+  scriptFlush = (...n) => this.chain(new lt(n, this.commandOptions));
+  scriptLoad = (...n) => this.chain(new Ct(n, this.commandOptions));
+  sdiff = (...n) => this.chain(new gt(n, this.commandOptions));
+  sdiffstore = (...n) => this.chain(new xt(n, this.commandOptions));
+  set = (n, t, o) => this.chain(new ft([n, t, o], this.commandOptions));
+  setbit = (...n) => this.chain(new yt(n, this.commandOptions));
+  setex = (n, t, o) => this.chain(new bt([n, t, o], this.commandOptions));
+  setnx = (n, t) => this.chain(new Tt([n, t], this.commandOptions));
+  setrange = (...n) => this.chain(new Ot(n, this.commandOptions));
+  sinter = (...n) => this.chain(new wt(n, this.commandOptions));
+  sinterstore = (...n) => this.chain(new Dt(n, this.commandOptions));
+  sismember = (n, t) => this.chain(new At([n, t], this.commandOptions));
+  smembers = (...n) => this.chain(new kt(n, this.commandOptions));
+  smismember = (n, t) => this.chain(new Rt([n, t], this.commandOptions));
+  smove = (n, t, o) => this.chain(new St([n, t, o], this.commandOptions));
+  spop = (...n) => this.chain(new Et(n, this.commandOptions));
+  srandmember = (...n) => this.chain(new Mt(n, this.commandOptions));
+  srem = (n, ...t) => this.chain(new Pt([n, ...t], this.commandOptions));
+  sscan = (...n) => this.chain(new vt(n, this.commandOptions));
+  strlen = (...n) => this.chain(new It(n, this.commandOptions));
+  sunion = (...n) => this.chain(new Nt(n, this.commandOptions));
+  sunionstore = (...n) => this.chain(new Lt(n, this.commandOptions));
+  time = () => this.chain(new zt(this.commandOptions));
+  touch = (...n) => this.chain(new Gt(n, this.commandOptions));
+  ttl = (...n) => this.chain(new Kt(n, this.commandOptions));
+  type = (...n) => this.chain(new Xt(n, this.commandOptions));
+  unlink = (...n) => this.chain(new Jt(n, this.commandOptions));
+  zadd = (...n) => "score" in n[1] ? this.chain(new l([n[0], n[1], ...n.slice(2)], this.commandOptions)) : this.chain(new l([n[0], n[1], ...n.slice(2)], this.commandOptions));
+  xadd = (...n) => this.chain(new Zt(n, this.commandOptions));
+  xack = (...n) => this.chain(new Ut(n, this.commandOptions));
+  xdel = (...n) => this.chain(new Ft(n, this.commandOptions));
+  xgroup = (...n) => this.chain(new $t(n, this.commandOptions));
+  xread = (...n) => this.chain(new _t(n, this.commandOptions));
+  xreadgroup = (...n) => this.chain(new Wt(n, this.commandOptions));
+  xinfo = (...n) => this.chain(new qt(n, this.commandOptions));
+  xlen = (...n) => this.chain(new jt(n, this.commandOptions));
+  xpending = (...n) => this.chain(new Yt(n, this.commandOptions));
+  xclaim = (...n) => this.chain(new Ht(n, this.commandOptions));
+  xautoclaim = (...n) => this.chain(new Bt(n, this.commandOptions));
+  xtrim = (...n) => this.chain(new ne(n, this.commandOptions));
+  xrange = (...n) => this.chain(new Vt(n, this.commandOptions));
+  xrevrange = (...n) => this.chain(new Qt(n, this.commandOptions));
+  zcard = (...n) => this.chain(new te(n, this.commandOptions));
+  zcount = (...n) => this.chain(new ee(n, this.commandOptions));
+  zincrby = (n, t, o) => this.chain(new oe([n, t, o], this.commandOptions));
+  zinterstore = (...n) => this.chain(new se(n, this.commandOptions));
+  zlexcount = (...n) => this.chain(new me(n, this.commandOptions));
+  zmscore = (...n) => this.chain(new be(n, this.commandOptions));
+  zpopmax = (...n) => this.chain(new re(n, this.commandOptions));
+  zpopmin = (...n) => this.chain(new ae(n, this.commandOptions));
+  zrange = (...n) => this.chain(new ie(n, this.commandOptions));
+  zrank = (n, t) => this.chain(new pe([n, t], this.commandOptions));
+  zrem = (n, ...t) => this.chain(new de([n, ...t], this.commandOptions));
+  zremrangebylex = (...n) => this.chain(new ce(n, this.commandOptions));
+  zremrangebyrank = (...n) => this.chain(new ue(n, this.commandOptions));
+  zremrangebyscore = (...n) => this.chain(new he(n, this.commandOptions));
+  zrevrank = (n, t) => this.chain(new le([n, t], this.commandOptions));
+  zscan = (...n) => this.chain(new Ce(n, this.commandOptions));
+  zscore = (n, t) => this.chain(new ge([n, t], this.commandOptions));
+  zunionstore = (...n) => this.chain(new fe(n, this.commandOptions));
+  zunion = (...n) => this.chain(new xe(n, this.commandOptions));
+  get json() {
+    return { arrappend: (...n) => this.chain(new dn(n, this.commandOptions)), arrindex: (...n) => this.chain(new cn(n, this.commandOptions)), arrinsert: (...n) => this.chain(new un(n, this.commandOptions)), arrlen: (...n) => this.chain(new hn(n, this.commandOptions)), arrpop: (...n) => this.chain(new ln(n, this.commandOptions)), arrtrim: (...n) => this.chain(new Cn(n, this.commandOptions)), clear: (...n) => this.chain(new gn(n, this.commandOptions)), del: (...n) => this.chain(new xn(n, this.commandOptions)), forget: (...n) => this.chain(new fn(n, this.commandOptions)), get: (...n) => this.chain(new yn(n, this.commandOptions)), mget: (...n) => this.chain(new bn(n, this.commandOptions)), numincrby: (...n) => this.chain(new Tn(n, this.commandOptions)), nummultby: (...n) => this.chain(new On(n, this.commandOptions)), objkeys: (...n) => this.chain(new wn(n, this.commandOptions)), objlen: (...n) => this.chain(new Dn(n, this.commandOptions)), resp: (...n) => this.chain(new An(n, this.commandOptions)), set: (...n) => this.chain(new kn(n, this.commandOptions)), strappend: (...n) => this.chain(new Rn(n, this.commandOptions)), strlen: (...n) => this.chain(new Sn(n, this.commandOptions)), toggle: (...n) => this.chain(new En(n, this.commandOptions)), type: (...n) => this.chain(new Mn(n, this.commandOptions)) };
+  }
+};
+var we = class {
+  script;
+  sha1;
+  redis;
+  constructor(n, t) {
+    this.redis = n, this.sha1 = this.digest(t), this.script = t;
+  }
+  async eval(n, t) {
+    return await this.redis.eval(this.script, n, t);
+  }
+  async evalsha(n, t) {
+    return await this.redis.evalsha(this.sha1, n, t);
+  }
+  async exec(n, t) {
+    return await this.redis.evalsha(this.sha1, n, t).catch(async (m) => {
+      if (m instanceof Error && m.message.toLowerCase().includes("noscript"))
+        return await this.redis.eval(this.script, n, t);
+      throw m;
+    });
+  }
+  digest(n) {
+    return import_enc_hex.default.stringify((0, import_sha1.default)(n));
+  }
+};
+function Re(s, n) {
+  let t = s;
+  return t.autoPipelineExecutor || (t.autoPipelineExecutor = new ke(t)), new Proxy(t, { get: (o, m) => m === "pipelineCounter" ? o.autoPipelineExecutor.pipelineCounter : m === "json" ? Re(o, true) : m in o && !(m in o.autoPipelineExecutor.pipeline) ? o[m] : typeof o.autoPipelineExecutor.pipeline[m] == "function" ? (...a2) => o.autoPipelineExecutor.withAutoPipeline((i) => {
+    n ? i.json[m](...a2) : i[m](...a2);
+  }) : o.autoPipelineExecutor.pipeline[m] });
+}
+var ke = class {
+  pipelinePromises = /* @__PURE__ */ new WeakMap();
+  activePipeline = null;
+  indexInCurrentPipeline = 0;
+  redis;
+  pipeline;
+  pipelineCounter = 0;
+  constructor(n) {
+    this.redis = n, this.pipeline = n.pipeline();
+  }
+  async withAutoPipeline(n) {
+    let t = this.activePipeline || this.redis.pipeline();
+    this.activePipeline || (this.activePipeline = t, this.indexInCurrentPipeline = 0);
+    let o = this.indexInCurrentPipeline++;
+    return n(t), (await this.deferExecution().then(() => {
+      if (!this.pipelinePromises.has(t)) {
+        let a2 = t.exec();
+        this.pipelineCounter += 1, this.pipelinePromises.set(t, a2), this.activePipeline = null;
+      }
+      return this.pipelinePromises.get(t);
+    }))[o];
+  }
+  async deferExecution() {
+    return await Promise.resolve(), await Promise.resolve();
+  }
+};
+var Pe = class {
+  client;
+  opts;
+  enableTelemetry;
+  enableAutoPipelining;
+  constructor(n, t) {
+    this.client = n, this.opts = t, this.enableTelemetry = t?.enableTelemetry ?? true, this.enableAutoPipelining = t?.enableAutoPipelining ?? false;
+  }
+  get json() {
+    return { arrappend: (...n) => new dn(n, this.opts).exec(this.client), arrindex: (...n) => new cn(n, this.opts).exec(this.client), arrinsert: (...n) => new un(n, this.opts).exec(this.client), arrlen: (...n) => new hn(n, this.opts).exec(this.client), arrpop: (...n) => new ln(n, this.opts).exec(this.client), arrtrim: (...n) => new Cn(n, this.opts).exec(this.client), clear: (...n) => new gn(n, this.opts).exec(this.client), del: (...n) => new xn(n, this.opts).exec(this.client), forget: (...n) => new fn(n, this.opts).exec(this.client), get: (...n) => new yn(n, this.opts).exec(this.client), mget: (...n) => new bn(n, this.opts).exec(this.client), numincrby: (...n) => new Tn(n, this.opts).exec(this.client), nummultby: (...n) => new On(n, this.opts).exec(this.client), objkeys: (...n) => new wn(n, this.opts).exec(this.client), objlen: (...n) => new Dn(n, this.opts).exec(this.client), resp: (...n) => new An(n, this.opts).exec(this.client), set: (...n) => new kn(n, this.opts).exec(this.client), strappend: (...n) => new Rn(n, this.opts).exec(this.client), strlen: (...n) => new Sn(n, this.opts).exec(this.client), toggle: (...n) => new En(n, this.opts).exec(this.client), type: (...n) => new Mn(n, this.opts).exec(this.client) };
+  }
+  use = (n) => {
+    let t = this.client.request.bind(this.client);
+    this.client.request = (o) => n(o, t);
+  };
+  addTelemetry = (n) => {
+    if (this.enableTelemetry)
+      try {
+        this.client.mergeTelemetry(n);
+      } catch {
+      }
+  };
+  createScript(n) {
+    return new we(this, n);
+  }
+  pipeline = () => new Te({ client: this.client, commandOptions: this.opts, multiExec: false });
+  autoPipeline = () => Re(this);
+  multi = () => new Te({ client: this.client, commandOptions: this.opts, multiExec: true });
+  append = (...n) => new g(n, this.opts).exec(this.client);
+  bitcount = (...n) => new x(n, this.opts).exec(this.client);
+  bitop = (n, t, o, ...m) => new f([n, t, o, ...m], this.opts).exec(this.client);
+  bitpos = (...n) => new y(n, this.opts).exec(this.client);
+  copy = (...n) => new b(n, this.opts).exec(this.client);
+  dbsize = () => new T(this.opts).exec(this.client);
+  decr = (...n) => new O(n, this.opts).exec(this.client);
+  decrby = (...n) => new w(n, this.opts).exec(this.client);
+  del = (...n) => new D(n, this.opts).exec(this.client);
+  echo = (...n) => new A(n, this.opts).exec(this.client);
+  eval = (...n) => new k(n, this.opts).exec(this.client);
+  evalsha = (...n) => new R(n, this.opts).exec(this.client);
+  exists = (...n) => new S(n, this.opts).exec(this.client);
+  expire = (...n) => new E(n, this.opts).exec(this.client);
+  expireat = (...n) => new M(n, this.opts).exec(this.client);
+  flushall = (n) => new P(n, this.opts).exec(this.client);
+  flushdb = (...n) => new v(n, this.opts).exec(this.client);
+  geoadd = (...n) => new I(n, this.opts).exec(this.client);
+  geopos = (...n) => new z(n, this.opts).exec(this.client);
+  geodist = (...n) => new N(n, this.opts).exec(this.client);
+  geohash = (...n) => new L(n, this.opts).exec(this.client);
+  geosearch = (...n) => new G(n, this.opts).exec(this.client);
+  geosearchstore = (...n) => new K(n, this.opts).exec(this.client);
+  get = (...n) => new X(n, this.opts).exec(this.client);
+  getbit = (...n) => new J(n, this.opts).exec(this.client);
+  getdel = (...n) => new U(n, this.opts).exec(this.client);
+  getrange = (...n) => new Z(n, this.opts).exec(this.client);
+  getset = (n, t) => new B([n, t], this.opts).exec(this.client);
+  hdel = (...n) => new H(n, this.opts).exec(this.client);
+  hexists = (...n) => new F(n, this.opts).exec(this.client);
+  hget = (...n) => new $(n, this.opts).exec(this.client);
+  hgetall = (...n) => new q(n, this.opts).exec(this.client);
+  hincrby = (...n) => new j(n, this.opts).exec(this.client);
+  hincrbyfloat = (...n) => new Y(n, this.opts).exec(this.client);
+  hkeys = (...n) => new V(n, this.opts).exec(this.client);
+  hlen = (...n) => new _(n, this.opts).exec(this.client);
+  hmget = (...n) => new W(n, this.opts).exec(this.client);
+  hmset = (n, t) => new Q([n, t], this.opts).exec(this.client);
+  hrandfield = (n, t, o) => new nn([n, t, o], this.opts).exec(this.client);
+  hscan = (...n) => new tn(n, this.opts).exec(this.client);
+  hset = (n, t) => new en([n, t], this.opts).exec(this.client);
+  hsetnx = (n, t, o) => new on([n, t, o], this.opts).exec(this.client);
+  hstrlen = (...n) => new sn(n, this.opts).exec(this.client);
+  hvals = (...n) => new mn(n, this.opts).exec(this.client);
+  incr = (...n) => new rn(n, this.opts).exec(this.client);
+  incrby = (...n) => new an(n, this.opts).exec(this.client);
+  incrbyfloat = (...n) => new pn(n, this.opts).exec(this.client);
+  keys = (...n) => new Pn(n, this.opts).exec(this.client);
+  lindex = (...n) => new vn(n, this.opts).exec(this.client);
+  linsert = (n, t, o, m) => new In([n, t, o, m], this.opts).exec(this.client);
+  llen = (...n) => new Nn(n, this.opts).exec(this.client);
+  lmove = (...n) => new Ln(n, this.opts).exec(this.client);
+  lpop = (...n) => new zn(n, this.opts).exec(this.client);
+  lmpop = (...n) => new Gn(n, this.opts).exec(this.client);
+  lpos = (...n) => new Kn(n, this.opts).exec(this.client);
+  lpush = (n, ...t) => new Xn([n, ...t], this.opts).exec(this.client);
+  lpushx = (n, ...t) => new Jn([n, ...t], this.opts).exec(this.client);
+  lrange = (...n) => new Un(n, this.opts).exec(this.client);
+  lrem = (n, t, o) => new Zn([n, t, o], this.opts).exec(this.client);
+  lset = (n, t, o) => new Bn([n, t, o], this.opts).exec(this.client);
+  ltrim = (...n) => new Hn(n, this.opts).exec(this.client);
+  mget = (...n) => new Fn(n, this.opts).exec(this.client);
+  mset = (n) => new $n([n], this.opts).exec(this.client);
+  msetnx = (n) => new qn([n], this.opts).exec(this.client);
+  persist = (...n) => new jn(n, this.opts).exec(this.client);
+  pexpire = (...n) => new Yn(n, this.opts).exec(this.client);
+  pexpireat = (...n) => new Vn(n, this.opts).exec(this.client);
+  pfadd = (...n) => new _n(n, this.opts).exec(this.client);
+  pfcount = (...n) => new Wn(n, this.opts).exec(this.client);
+  pfmerge = (...n) => new Qn(n, this.opts).exec(this.client);
+  ping = (n) => new nt(n, this.opts).exec(this.client);
+  psetex = (n, t, o) => new tt([n, t, o], this.opts).exec(this.client);
+  pttl = (...n) => new et(n, this.opts).exec(this.client);
+  publish = (...n) => new ot(n, this.opts).exec(this.client);
+  randomkey = () => new st().exec(this.client);
+  rename = (...n) => new mt(n, this.opts).exec(this.client);
+  renamenx = (...n) => new rt(n, this.opts).exec(this.client);
+  rpop = (...n) => new at(n, this.opts).exec(this.client);
+  rpush = (n, ...t) => new it([n, ...t], this.opts).exec(this.client);
+  rpushx = (n, ...t) => new pt([n, ...t], this.opts).exec(this.client);
+  sadd = (n, ...t) => new dt([n, ...t], this.opts).exec(this.client);
+  scan = (...n) => new ct(n, this.opts).exec(this.client);
+  scard = (...n) => new ut(n, this.opts).exec(this.client);
+  scriptExists = (...n) => new ht(n, this.opts).exec(this.client);
+  scriptFlush = (...n) => new lt(n, this.opts).exec(this.client);
+  scriptLoad = (...n) => new Ct(n, this.opts).exec(this.client);
+  sdiff = (...n) => new gt(n, this.opts).exec(this.client);
+  sdiffstore = (...n) => new xt(n, this.opts).exec(this.client);
+  set = (n, t, o) => new ft([n, t, o], this.opts).exec(this.client);
+  setbit = (...n) => new yt(n, this.opts).exec(this.client);
+  setex = (n, t, o) => new bt([n, t, o], this.opts).exec(this.client);
+  setnx = (n, t) => new Tt([n, t], this.opts).exec(this.client);
+  setrange = (...n) => new Ot(n, this.opts).exec(this.client);
+  sinter = (...n) => new wt(n, this.opts).exec(this.client);
+  sinterstore = (...n) => new Dt(n, this.opts).exec(this.client);
+  sismember = (n, t) => new At([n, t], this.opts).exec(this.client);
+  smismember = (n, t) => new Rt([n, t], this.opts).exec(this.client);
+  smembers = (...n) => new kt(n, this.opts).exec(this.client);
+  smove = (n, t, o) => new St([n, t, o], this.opts).exec(this.client);
+  spop = (...n) => new Et(n, this.opts).exec(this.client);
+  srandmember = (...n) => new Mt(n, this.opts).exec(this.client);
+  srem = (n, ...t) => new Pt([n, ...t], this.opts).exec(this.client);
+  sscan = (...n) => new vt(n, this.opts).exec(this.client);
+  strlen = (...n) => new It(n, this.opts).exec(this.client);
+  sunion = (...n) => new Nt(n, this.opts).exec(this.client);
+  sunionstore = (...n) => new Lt(n, this.opts).exec(this.client);
+  time = () => new zt().exec(this.client);
+  touch = (...n) => new Gt(n, this.opts).exec(this.client);
+  ttl = (...n) => new Kt(n, this.opts).exec(this.client);
+  type = (...n) => new Xt(n, this.opts).exec(this.client);
+  unlink = (...n) => new Jt(n, this.opts).exec(this.client);
+  xadd = (...n) => new Zt(n, this.opts).exec(this.client);
+  xack = (...n) => new Ut(n, this.opts).exec(this.client);
+  xdel = (...n) => new Ft(n, this.opts).exec(this.client);
+  xgroup = (...n) => new $t(n, this.opts).exec(this.client);
+  xread = (...n) => new _t(n, this.opts).exec(this.client);
+  xreadgroup = (...n) => new Wt(n, this.opts).exec(this.client);
+  xinfo = (...n) => new qt(n, this.opts).exec(this.client);
+  xlen = (...n) => new jt(n, this.opts).exec(this.client);
+  xpending = (...n) => new Yt(n, this.opts).exec(this.client);
+  xclaim = (...n) => new Ht(n, this.opts).exec(this.client);
+  xautoclaim = (...n) => new Bt(n, this.opts).exec(this.client);
+  xtrim = (...n) => new ne(n, this.opts).exec(this.client);
+  xrange = (...n) => new Vt(n, this.opts).exec(this.client);
+  xrevrange = (...n) => new Qt(n, this.opts).exec(this.client);
+  zadd = (...n) => "score" in n[1] ? new l([n[0], n[1], ...n.slice(2)], this.opts).exec(this.client) : new l([n[0], n[1], ...n.slice(2)], this.opts).exec(this.client);
+  zcard = (...n) => new te(n, this.opts).exec(this.client);
+  zcount = (...n) => new ee(n, this.opts).exec(this.client);
+  zdiffstore = (...n) => new ye(n, this.opts).exec(this.client);
+  zincrby = (n, t, o) => new oe([n, t, o], this.opts).exec(this.client);
+  zinterstore = (...n) => new se(n, this.opts).exec(this.client);
+  zlexcount = (...n) => new me(n, this.opts).exec(this.client);
+  zmscore = (...n) => new be(n, this.opts).exec(this.client);
+  zpopmax = (...n) => new re(n, this.opts).exec(this.client);
+  zpopmin = (...n) => new ae(n, this.opts).exec(this.client);
+  zrange = (...n) => new ie(n, this.opts).exec(this.client);
+  zrank = (n, t) => new pe([n, t], this.opts).exec(this.client);
+  zrem = (n, ...t) => new de([n, ...t], this.opts).exec(this.client);
+  zremrangebylex = (...n) => new ce(n, this.opts).exec(this.client);
+  zremrangebyrank = (...n) => new ue(n, this.opts).exec(this.client);
+  zremrangebyscore = (...n) => new he(n, this.opts).exec(this.client);
+  zrevrank = (n, t) => new le([n, t], this.opts).exec(this.client);
+  zscan = (...n) => new Ce(n, this.opts).exec(this.client);
+  zscore = (n, t) => new ge([n, t], this.opts).exec(this.client);
+  zunion = (...n) => new xe(n, this.opts).exec(this.client);
+  zunionstore = (...n) => new fe(n, this.opts).exec(this.client);
+};
+var qC = "v1.31.5";
+
+// node_modules/@upstash/redis/cloudflare.mjs
+var a = class l2 extends Pe {
+  constructor(e2, t) {
+    if (!e2.url)
+      throw new Error("[Upstash Redis] The 'url' property is missing or undefined in your Redis config.");
+    if (!e2.token)
+      throw new Error("[Upstash Redis] The 'token' property is missing or undefined in your Redis config.");
+    (e2.url.startsWith(" ") || e2.url.endsWith(" ") || /\r|\n/.test(e2.url)) && console.warn("The redis url contains whitespace or newline, which can cause errors!"), (e2.token.startsWith(" ") || e2.token.endsWith(" ") || /\r|\n/.test(e2.token)) && console.warn("The redis token contains whitespace or newline, which can cause errors!");
+    let r = new Se({ retry: e2.retry, baseUrl: e2.url, headers: { authorization: `Bearer ${e2.token}` }, responseEncoding: e2.responseEncoding, signal: e2.signal });
+    if (super(r, { enableTelemetry: !t?.UPSTASH_DISABLE_TELEMETRY, automaticDeserialization: e2.automaticDeserialization, latencyLogging: e2.latencyLogging, enableAutoPipelining: e2.enableAutoPipelining }), this.addTelemetry({ platform: "cloudflare", sdk: `@upstash/redis@${qC}` }), this.enableAutoPipelining)
+      return this.autoPipeline();
+  }
+  static fromEnv(e2, t) {
+    let r = e2?.UPSTASH_REDIS_REST_URL ?? UPSTASH_REDIS_REST_URL, n = e2?.UPSTASH_REDIS_REST_TOKEN ?? UPSTASH_REDIS_REST_TOKEN;
+    if (!r)
+      throw new Error("Unable to find environment variable: `UPSTASH_REDIS_REST_URL`. Please add it via `wrangler secret put UPSTASH_REDIS_REST_URL`");
+    if (!n)
+      throw new Error("Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`. Please add it via `wrangler secret put UPSTASH_REDIS_REST_TOKEN`");
+    return new l2({ ...t, url: r, token: n }, e2);
+  }
+};
 
 // node_modules/hono/dist/index.js
 init_checked_fetch();
@@ -2721,15 +4291,15 @@ var Context = class {
     this.#isFresh = false;
     if (this.#res && _res) {
       this.#res.headers.delete("content-type");
-      for (const [k, v] of this.#res.headers.entries()) {
-        if (k === "set-cookie") {
+      for (const [k2, v2] of this.#res.headers.entries()) {
+        if (k2 === "set-cookie") {
           const cookies = this.#res.headers.getSetCookie();
           _res.headers.delete("set-cookie");
           for (const cookie of cookies) {
             _res.headers.append("set-cookie", cookie);
           }
         } else {
-          _res.headers.set(k, v);
+          _res.headers.set(k2, v2);
         }
       }
     }
@@ -2800,11 +4370,11 @@ var Context = class {
     if (arg && typeof arg !== "number") {
       const header = new Headers(arg.headers);
       if (this.#headers) {
-        this.#headers.forEach((v, k) => {
-          if (k === "set-cookie") {
-            header.append(k, v);
+        this.#headers.forEach((v2, k2) => {
+          if (k2 === "set-cookie") {
+            header.append(k2, v2);
           } else {
-            header.set(k, v);
+            header.set(k2, v2);
           }
         });
       }
@@ -2819,23 +4389,23 @@ var Context = class {
     this.#headers ??= new Headers();
     setHeaders(this.#headers, this.#preparedHeaders);
     if (this.#res) {
-      this.#res.headers.forEach((v, k) => {
-        if (k === "set-cookie") {
-          this.#headers?.append(k, v);
+      this.#res.headers.forEach((v2, k2) => {
+        if (k2 === "set-cookie") {
+          this.#headers?.append(k2, v2);
         } else {
-          this.#headers?.set(k, v);
+          this.#headers?.set(k2, v2);
         }
       });
       setHeaders(this.#headers, this.#preparedHeaders);
     }
     headers ??= {};
-    for (const [k, v] of Object.entries(headers)) {
-      if (typeof v === "string") {
-        this.#headers.set(k, v);
+    for (const [k2, v2] of Object.entries(headers)) {
+      if (typeof v2 === "string") {
+        this.#headers.set(k2, v2);
       } else {
-        this.#headers.delete(k);
-        for (const v2 of v) {
-          this.#headers.append(k, v2);
+        this.#headers.delete(k2);
+        for (const v22 of v2) {
+          this.#headers.append(k2, v22);
         }
       }
     }
@@ -3034,9 +4604,9 @@ var extractGroupsFromPath = (path) => {
 var replaceGroupMarks = (paths, groups) => {
   for (let i = groups.length - 1; i >= 0; i--) {
     const [mark] = groups[i];
-    for (let j = paths.length - 1; j >= 0; j--) {
-      if (paths[j].includes(mark)) {
-        paths[j] = paths[j].replace(mark, groups[i][1]);
+    for (let j2 = paths.length - 1; j2 >= 0; j2--) {
+      if (paths[j2].includes(mark)) {
+        paths[j2] = paths[j2].replace(mark, groups[i][1]);
         break;
       }
     }
@@ -3141,7 +4711,7 @@ var checkOptionalParameter = (path) => {
       }
     }
   });
-  return results.filter((v, i, a2) => a2.indexOf(v) === i);
+  return results.filter((v2, i, a2) => a2.indexOf(v2) === i);
 };
 var _decodeURI = (value) => {
   if (!/[%+]/.test(value)) {
@@ -3582,24 +5152,24 @@ var ONLY_WILDCARD_REG_EXP_STR = ".*";
 var TAIL_WILDCARD_REG_EXP_STR = "(?:|/.*)";
 var PATH_ERROR = Symbol();
 var regExpMetaChars = new Set(".\\+*[^]$()");
-function compareKey(a2, b) {
+function compareKey(a2, b2) {
   if (a2.length === 1) {
-    return b.length === 1 ? a2 < b ? -1 : 1 : -1;
+    return b2.length === 1 ? a2 < b2 ? -1 : 1 : -1;
   }
-  if (b.length === 1) {
+  if (b2.length === 1) {
     return 1;
   }
   if (a2 === ONLY_WILDCARD_REG_EXP_STR || a2 === TAIL_WILDCARD_REG_EXP_STR) {
     return 1;
-  } else if (b === ONLY_WILDCARD_REG_EXP_STR || b === TAIL_WILDCARD_REG_EXP_STR) {
+  } else if (b2 === ONLY_WILDCARD_REG_EXP_STR || b2 === TAIL_WILDCARD_REG_EXP_STR) {
     return -1;
   }
   if (a2 === LABEL_REG_EXP_STR) {
     return 1;
-  } else if (b === LABEL_REG_EXP_STR) {
+  } else if (b2 === LABEL_REG_EXP_STR) {
     return -1;
   }
-  return a2.length === b.length ? a2 < b ? -1 : 1 : b.length - a2.length;
+  return a2.length === b2.length ? a2 < b2 ? -1 : 1 : b2.length - a2.length;
 }
 var Node = class {
   index;
@@ -3631,7 +5201,7 @@ var Node = class {
       node = this.children[regexpStr];
       if (!node) {
         if (Object.keys(this.children).some(
-          (k) => k !== ONLY_WILDCARD_REG_EXP_STR && k !== TAIL_WILDCARD_REG_EXP_STR
+          (k2) => k2 !== ONLY_WILDCARD_REG_EXP_STR && k2 !== TAIL_WILDCARD_REG_EXP_STR
         )) {
           throw PATH_ERROR;
         }
@@ -3650,7 +5220,7 @@ var Node = class {
       node = this.children[token];
       if (!node) {
         if (Object.keys(this.children).some(
-          (k) => k.length > 1 && k !== ONLY_WILDCARD_REG_EXP_STR && k !== TAIL_WILDCARD_REG_EXP_STR
+          (k2) => k2.length > 1 && k2 !== ONLY_WILDCARD_REG_EXP_STR && k2 !== TAIL_WILDCARD_REG_EXP_STR
         )) {
           throw PATH_ERROR;
         }
@@ -3664,9 +5234,9 @@ var Node = class {
   }
   buildRegExpStr() {
     const childKeys = Object.keys(this.children).sort(compareKey);
-    const strList = childKeys.map((k) => {
-      const c = this.children[k];
-      return (typeof c.varIndex === "number" ? `(${k})@${c.varIndex}` : regExpMetaChars.has(k) ? `\\${k}` : k) + c.buildRegExpStr();
+    const strList = childKeys.map((k2) => {
+      const c = this.children[k2];
+      return (typeof c.varIndex === "number" ? `(${k2})@${c.varIndex}` : regExpMetaChars.has(k2) ? `\\${k2}` : k2) + c.buildRegExpStr();
     });
     if (typeof this.index === "number") {
       strList.unshift(`#${this.index}`);
@@ -3706,9 +5276,9 @@ var Trie = class {
     const tokens = path.match(/(?::[^\/]+)|(?:\/\*$)|./g) || [];
     for (let i = groups.length - 1; i >= 0; i--) {
       const [mark] = groups[i];
-      for (let j = tokens.length - 1; j >= 0; j--) {
-        if (tokens[j].indexOf(mark) !== -1) {
-          tokens[j] = tokens[j].replace(mark, groups[i][1]);
+      for (let j2 = tokens.length - 1; j2 >= 0; j2--) {
+        if (tokens[j2].indexOf(mark) !== -1) {
+          tokens[j2] = tokens[j2].replace(mark, groups[i][1]);
           break;
         }
       }
@@ -3724,7 +5294,7 @@ var Trie = class {
     let captureIndex = 0;
     const indexReplacementMap = [];
     const paramReplacementMap = [];
-    regexp = regexp.replace(/#(\d+)|@(\d+)|\.\*\$/g, (_, handlerIndex, paramIndex) => {
+    regexp = regexp.replace(/#(\d+)|@(\d+)|\.\*\$/g, (_2, handlerIndex, paramIndex) => {
       if (typeof handlerIndex !== "undefined") {
         indexReplacementMap[++captureIndex] = Number(handlerIndex);
         return "$()";
@@ -3747,7 +5317,7 @@ function buildWildcardRegExp(path) {
   return wildcardRegExpCache[path] ??= new RegExp(
     path === "*" ? "" : `^${path.replace(
       /\/\*$|([.\\+*[^\]$()])/g,
-      (_, metaChar) => metaChar ? `\\${metaChar}` : "(?:|/.*)"
+      (_2, metaChar) => metaChar ? `\\${metaChar}` : "(?:|/.*)"
     )}$`
   );
 }
@@ -3766,42 +5336,42 @@ function buildMatcherFromPreprocessedRoutes(routes) {
     ([isStaticA, pathA], [isStaticB, pathB]) => isStaticA ? 1 : isStaticB ? -1 : pathA.length - pathB.length
   );
   const staticMap = /* @__PURE__ */ Object.create(null);
-  for (let i = 0, j = -1, len = routesWithStaticPathFlag.length; i < len; i++) {
+  for (let i = 0, j2 = -1, len = routesWithStaticPathFlag.length; i < len; i++) {
     const [pathErrorCheckOnly, path, handlers] = routesWithStaticPathFlag[i];
     if (pathErrorCheckOnly) {
-      staticMap[path] = [handlers.map(([h]) => [h, /* @__PURE__ */ Object.create(null)]), emptyParam];
+      staticMap[path] = [handlers.map(([h2]) => [h2, /* @__PURE__ */ Object.create(null)]), emptyParam];
     } else {
-      j++;
+      j2++;
     }
     let paramAssoc;
     try {
-      paramAssoc = trie.insert(path, j, pathErrorCheckOnly);
-    } catch (e) {
-      throw e === PATH_ERROR ? new UnsupportedPathError(path) : e;
+      paramAssoc = trie.insert(path, j2, pathErrorCheckOnly);
+    } catch (e2) {
+      throw e2 === PATH_ERROR ? new UnsupportedPathError(path) : e2;
     }
     if (pathErrorCheckOnly) {
       continue;
     }
-    handlerData[j] = handlers.map(([h, paramCount]) => {
+    handlerData[j2] = handlers.map(([h2, paramCount]) => {
       const paramIndexMap = /* @__PURE__ */ Object.create(null);
       paramCount -= 1;
       for (; paramCount >= 0; paramCount--) {
         const [key, value] = paramAssoc[paramCount];
         paramIndexMap[key] = value;
       }
-      return [h, paramIndexMap];
+      return [h2, paramIndexMap];
     });
   }
   const [regexp, indexReplacementMap, paramReplacementMap] = trie.buildRegExp();
   for (let i = 0, len = handlerData.length; i < len; i++) {
-    for (let j = 0, len2 = handlerData[i].length; j < len2; j++) {
-      const map = handlerData[i][j]?.[1];
+    for (let j2 = 0, len2 = handlerData[i].length; j2 < len2; j2++) {
+      const map = handlerData[i][j2]?.[1];
       if (!map) {
         continue;
       }
       const keys = Object.keys(map);
-      for (let k = 0, len3 = keys.length; k < len3; k++) {
-        map[keys[k]] = paramReplacementMap[map[keys[k]]];
+      for (let k2 = 0, len3 = keys.length; k2 < len3; k2++) {
+        map[keys[k2]] = paramReplacementMap[map[keys[k2]]];
       }
     }
   }
@@ -3815,9 +5385,9 @@ function findMiddleware(middleware, path) {
   if (!middleware) {
     return void 0;
   }
-  for (const k of Object.keys(middleware).sort((a2, b) => b.length - a2.length)) {
-    if (buildWildcardRegExp(k).test(path)) {
-      return [...middleware[k]];
+  for (const k2 of Object.keys(middleware).sort((a2, b2) => b2.length - a2.length)) {
+    if (buildWildcardRegExp(k2).test(path)) {
+      return [...middleware[k2]];
     }
   }
   return void 0;
@@ -3849,7 +5419,7 @@ var RegExpRouter = class {
     }
     const paramCount = (path.match(/\/:/g) || []).length;
     if (/\*$/.test(path)) {
-      const re = buildWildcardRegExp(path);
+      const re2 = buildWildcardRegExp(path);
       if (method === METHOD_NAME_ALL) {
         Object.keys(middleware).forEach((m) => {
           middleware[m][path] ||= findMiddleware(middleware[m], path) || findMiddleware(middleware[METHOD_NAME_ALL], path) || [];
@@ -3860,14 +5430,14 @@ var RegExpRouter = class {
       Object.keys(middleware).forEach((m) => {
         if (method === METHOD_NAME_ALL || method === m) {
           Object.keys(middleware[m]).forEach((p) => {
-            re.test(p) && middleware[m][p].push([handler, paramCount]);
+            re2.test(p) && middleware[m][p].push([handler, paramCount]);
           });
         }
       });
       Object.keys(routes).forEach((m) => {
         if (method === METHOD_NAME_ALL || method === m) {
           Object.keys(routes[m]).forEach(
-            (p) => re.test(p) && routes[m][p].push([handler, paramCount])
+            (p) => re2.test(p) && routes[m][p].push([handler, paramCount])
           );
         }
       });
@@ -3969,11 +5539,11 @@ var SmartRouter = class {
           router.add(...args);
         });
         res = router.match(method, path);
-      } catch (e) {
-        if (e instanceof UnsupportedPathError) {
+      } catch (e2) {
+        if (e2 instanceof UnsupportedPathError) {
           continue;
         }
-        throw e;
+        throw e2;
       }
       this.match = router.match.bind(router);
       this.routers = [router];
@@ -4053,7 +5623,7 @@ var Node2 = class {
     const m = /* @__PURE__ */ Object.create(null);
     const handlerSet = {
       handler,
-      possibleKeys: possibleKeys.filter((v, i, a2) => a2.indexOf(v) === i),
+      possibleKeys: possibleKeys.filter((v2, i, a2) => a2.indexOf(v2) === i),
       name: this.name,
       score: this.order
     };
@@ -4089,8 +5659,8 @@ var Node2 = class {
       const part = parts[i];
       const isLast = i === len - 1;
       const tempNodes = [];
-      for (let j = 0, len2 = curNodes.length; j < len2; j++) {
-        const node = curNodes[j];
+      for (let j2 = 0, len2 = curNodes.length; j2 < len2; j2++) {
+        const node = curNodes[j2];
         const nextNode = node.children[part];
         if (nextNode) {
           nextNode.params = node.params;
@@ -4105,8 +5675,8 @@ var Node2 = class {
             tempNodes.push(nextNode);
           }
         }
-        for (let k = 0, len3 = node.patterns.length; k < len3; k++) {
-          const pattern = node.patterns[k];
+        for (let k2 = 0, len3 = node.patterns.length; k2 < len3; k2++) {
+          const pattern = node.patterns[k2];
           const params = { ...node.params };
           if (pattern === "*") {
             const astNode = node.children["*"];
@@ -4145,8 +5715,8 @@ var Node2 = class {
       }
       curNodes = tempNodes;
     }
-    const results = handlerSets.sort((a2, b) => {
-      return a2.score - b.score;
+    const results = handlerSets.sort((a2, b2) => {
+      return a2.score - b2.score;
     });
     return [results.map(({ handler, params }) => [handler, params])];
   }
@@ -4187,6 +5757,54 @@ var Hono2 = class extends Hono {
 // node_modules/hono/dist/helper/adapter/index.js
 init_checked_fetch();
 init_modules_watch_stub();
+var env = (c, runtime) => {
+  const global2 = globalThis;
+  const globalEnv = global2?.process?.env;
+  runtime ??= getRuntimeKey();
+  const runtimeEnvHandlers = {
+    bun: () => globalEnv,
+    node: () => globalEnv,
+    "edge-light": () => globalEnv,
+    deno: () => {
+      return Deno.env.toObject();
+    },
+    workerd: () => c.env,
+    fastly: () => ({}),
+    other: () => ({})
+  };
+  return runtimeEnvHandlers[runtime]();
+};
+var knownUserAgents = {
+  deno: "Deno",
+  bun: "Bun",
+  workerd: "Cloudflare-Workers",
+  node: "Node.js"
+};
+var getRuntimeKey = () => {
+  const global2 = globalThis;
+  const userAgentSupported = typeof navigator !== "undefined" && true;
+  if (userAgentSupported) {
+    for (const [runtimeKey, userAgent] of Object.entries(knownUserAgents)) {
+      if (checkUserAgentEquals(userAgent)) {
+        return runtimeKey;
+      }
+    }
+  }
+  if (typeof global2?.EdgeRuntime === "string") {
+    return "edge-light";
+  }
+  if (global2?.fastly !== void 0) {
+    return "fastly";
+  }
+  if (global2?.process?.release?.name === "node") {
+    return "node";
+  }
+  return "other";
+};
+var checkUserAgentEquals = (platform) => {
+  const userAgent = "Cloudflare-Workers";
+  return userAgent.startsWith(platform);
+};
 
 // todos.json
 var todos = [
@@ -4219,6 +5837,34 @@ var todos = [
 
 // index.ts
 var app = new Hono2();
+var cache = /* @__PURE__ */ new Map();
+var RedisRateLimiter = class {
+  static getInstance(c) {
+    if (!this.Instance) {
+      const { REDIS_URL, REDIS_TOKEN } = env(c);
+      const redisClient = new a({
+        token: REDIS_TOKEN,
+        url: REDIS_URL
+      });
+      const rateLimit = new import_ratelimit.Ratelimit({
+        redis: redisClient,
+        limiter: import_ratelimit.Ratelimit.slidingWindow(10, "10 s"),
+        // sliding window algorithm will be used to do the rate limiting
+        ephemeralCache: cache
+      });
+    } else {
+      return this.Instance;
+    }
+  }
+};
+__publicField(RedisRateLimiter, "Instance");
+app.use(async (c, next) => {
+  const ratelimit = RedisRateLimiter.getInstance(c);
+  if (ratelimit) {
+    c.set("ratelimit", ratelimit);
+  }
+  await next();
+});
 app.get("/todos/:id", (c) => {
   const todoId = c.req.param("id");
   const todoIndex = Number(todoId);
@@ -4240,8 +5886,8 @@ var drainBody = async (request, env2, _ctx, middlewareCtx) => {
         while (!(await reader.read()).done) {
         }
       }
-    } catch (e) {
-      console.error("Failed to drain the unused request body.", e);
+    } catch (e2) {
+      console.error("Failed to drain the unused request body.", e2);
     }
   }
 };
@@ -4250,19 +5896,19 @@ var middleware_ensure_req_body_drained_default = drainBody;
 // node_modules/wrangler/templates/middleware/middleware-miniflare3-json-error.ts
 init_checked_fetch();
 init_modules_watch_stub();
-function reduceError(e) {
+function reduceError(e2) {
   return {
-    name: e?.name,
-    message: e?.message ?? String(e),
-    stack: e?.stack,
-    cause: e?.cause === void 0 ? void 0 : reduceError(e.cause)
+    name: e2?.name,
+    message: e2?.message ?? String(e2),
+    stack: e2?.stack,
+    cause: e2?.cause === void 0 ? void 0 : reduceError(e2.cause)
   };
 }
 var jsonError = async (request, env2, _ctx, middlewareCtx) => {
   try {
     return await middlewareCtx.next(request, env2);
-  } catch (e) {
-    const error = reduceError(e);
+  } catch (e2) {
+    const error = reduceError(e2);
     return Response.json(error, {
       status: 500,
       headers: { "MF-Experimental-Error-Stack": "true" }
