@@ -1,0 +1,6 @@
+compatibility_date  = "2024-04-08"
+name = "rate-limiter"
+
+[vars]
+UPSTASH_REDIS_REST_URL = "https://pretty-mammal-33210.upstash.io"
+UPSTASH_REDIS_REST_TOKEN = "AYG6AAIncDE1ZmZmNjU1MDRjZmU0MTdiYTQ0ZWMzNWJiYWE4MDMyYXAxMzMyMTA"
